@@ -2,6 +2,7 @@ package microcontroller
 
 import (
 	"firecontroller/component"
+	"firecontroller/utilities"
 	"io/ioutil"
 	"log"
 	"strconv"
@@ -19,7 +20,7 @@ type Microcontroller struct {
 
 /*String Just for pretty printing the device info */
 func (m *Microcontroller) String() string {
-	return "Device:{ deviceId:" + strconv.Itoa(m.ID) + ", Host:" + m.Host + ", port:" + m.Port + " }"
+	return utilities.LabelString("Microcontroller", utilities.LabelString("Id", strconv.Itoa(m.ID))+utilities.LabelString("Host", m.Host)+utilities.LabelString("Port", m.Port)+utilities.LabelString("Solenoids", m.solenoidsString()))
 }
 
 //Init - Initialize all the components on this device
