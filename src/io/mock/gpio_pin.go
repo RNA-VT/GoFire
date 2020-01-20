@@ -1,6 +1,10 @@
 package mock
 
-import "github.com/stianeikeland/go-rpio/v4"
+import (
+	"log"
+
+	"github.com/stianeikeland/go-rpio/v4"
+)
 
 //Pin mocks an rpio.Pin object
 type Pin struct {
@@ -16,11 +20,14 @@ func (pin Pin) Output() {
 
 // High - Set pin High
 func (pin Pin) High() {
+	log.Println("High Attempt")
 	pin.RpioState = rpio.High
+	log.Println(pin.RpioState)
 }
 
 // Low - Set pin Low
 func (pin Pin) Low() {
+	log.Println("Low Attempt")
 	pin.RpioState = rpio.Low
 }
 

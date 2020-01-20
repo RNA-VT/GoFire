@@ -72,17 +72,19 @@ func (s *Solenoid) State() string {
 	return "[GPIO PIN " + strconv.Itoa(s.HeaderPin)
 }
 
-func (s *Solenoid) open(duration int) {
-	if s.healthy() {
+//Open - Open the solenoid for a set duration
+func (s *Solenoid) Open(duration int) {
+	if s.Healthy() {
 		s.GPIO.Pin.High()
-		s.close(duration)
+		s.Close(duration)
 	} else {
 		//Log attempt to open unhealthy solenoid
 	}
 }
 
-func (s *Solenoid) close(delay int) {
-	if s.healthy() {
+//Close - Close the solenoid, optionally after a delay
+func (s *Solenoid) Close(delay int) {
+	if s.Healthy() {
 		if duration, err := time.ParseDuration(strconv.Itoa(delay) + "ms"); err == nil {
 			time.AfterFunc(duration, s.GPIO.Pin.Low)
 		} else {
@@ -93,7 +95,8 @@ func (s *Solenoid) close(delay int) {
 	}
 }
 
-func (s *Solenoid) healthy() bool {
+//Healthy - true if this component is healthy
+func (s *Solenoid) Healthy() bool {
 	return s.Enabled && !s.GPIO.Failed
 }
 

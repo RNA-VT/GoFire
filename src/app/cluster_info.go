@@ -11,7 +11,9 @@ import (
 func (a *Application) addInfoRoutes() {
 	a.Echo.GET("/cluster_info", a.getClusterInfo)
 	a.Echo.GET("/microcontroller", a.getMicrocontrollers)
+	a.Echo.GET("/microcontroller/:id", a.getMicrocontrollers)
 	a.Echo.GET("/component", a.getComponents)
+	a.Echo.GET("/component/:id", a.getComponent)
 	a.Echo.GET("/config", a.getComponentConfig)
 }
 
@@ -24,11 +26,17 @@ func (a *Application) getMicrocontrollers(c echo.Context) error {
 }
 
 func (a *Application) getComponents(c echo.Context) error {
-	container := make(map[string]interface{})
-	components := a.Cluster.GetComponents()
-	container["components"] = components
+	return c.JSON(http.StatusOK, a.Cluster.GetComponents())
+}
 
-	return c.JSON(http.StatusOK, container)
+func (a *Application) getComponent(c echo.Context) error {
+	id := c.Param("id")
+	components := a.Cluster.GetComponents()
+	component, ok := components[id]
+	if !ok {
+		return c.JSON(http.StatusOK, "Component Not Found")
+	}
+	return c.JSON(http.StatusOK, component)
 }
 
 func (a *Application) getComponentConfig(c echo.Context) error {
