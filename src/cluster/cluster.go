@@ -86,6 +86,8 @@ func (c *Cluster) KingMe() {
 	}
 	c.Me = me
 	c.MasterDevice = me
+	//The master also serves
+	c.SlaveDevices = append(c.SlaveDevices, me)
 	//The Master waits ...
 }
 
