@@ -3,6 +3,8 @@ package app
 import (
 	"encoding/json"
 	"firecontroller/cluster"
+	"firecontroller/component"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -30,6 +32,10 @@ func (a *Application) ConfigureRoutes(listenURL string) {
 	a.Echo.GET("/cluster_info", a.getClusterInfo)
 	a.Echo.POST("/join_network", a.joinNetwork)
 
+	a.Echo.GET("/microcontroller", a.getMicrocontrollers)
+	a.Echo.GET("/component", a.getComponents)
+	a.Echo.GET("/config", a.getComponentConfig)
+
 	log.Println("Configure routes listening on " + listenURL)
 
 	log.Println("***************************************")
@@ -48,6 +54,47 @@ func (a *Application) defaultGet(c echo.Context) error {
 	log.Println("Someone is touching me")
 
 	return c.String(http.StatusOK, "Help Me! I'm trapped in the Server! You're the only one receiving this message.")
+}
+
+func (a *Application) getMicrocontrollers(c echo.Context) error {
+	micros := a.Cluster.Me.String()
+	for i := 0; i < len(a.Cluster.SlaveDevices); i++ {
+		micros += a.Cluster.SlaveDevices[i].String()
+	}
+	log.Println(micros)
+	return c.JSONPretty(http.StatusOK, a.Cluster.SlaveDevices, "    ")
+}
+
+func (a *Application) getComponents(c echo.Context) error {
+	container := make(map[string]interface{})
+	count := countComponents(a.Cluster)
+	components := make(map[string]component.Solenoid, count)
+	for i := 0; i < len(a.Cluster.SlaveDevices); i++ {
+		for j := 0; j < len(a.Cluster.SlaveDevices[i].Solenoids); j++ {
+			components[a.Cluster.SlaveDevices[i].Solenoids[j].Name] = a.Cluster.SlaveDevices[i].Solenoids[j]
+		}
+	}
+	container["components"] = components
+
+	return c.JSONPretty(http.StatusOK, container, "    ")
+}
+
+func countComponents(c cluster.Cluster) int {
+	count := 0
+	for i := 0; i < len(c.SlaveDevices); i++ {
+		count += len(c.SlaveDevices[i].Solenoids)
+	}
+
+	return count
+}
+
+func (a *Application) getComponentConfig(c echo.Context) error {
+	yamlFile, err := ioutil.ReadFile("./app/config/solenoids.yaml")
+	if err != nil {
+		log.Printf("yamlFile.Get err   #%v ", err)
+		return err
+	}
+	return c.JSON(http.StatusOK, string(yamlFile))
 }
 
 func (a *Application) joinNetwork(c echo.Context) error {
