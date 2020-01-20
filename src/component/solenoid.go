@@ -6,7 +6,6 @@ import (
 	"firecontroller/utilities"
 	"log"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -25,14 +24,15 @@ func (s *Solenoid) Init() error {
 		return err
 	}
 	//Create UUID now that GPIO is initilized
-	s.buildUID()
+	s.setID()
 	log.Println("Enabled and Initialized Solenoid:", s.String())
 
 	return nil
 }
 
-func (s *Solenoid) buildUID() {
-	s.UID = strings.ReplaceAll(strings.ReplaceAll("solenoid-"+string(s.Mode)+"-"+s.Name+"-"+strconv.Itoa(s.HeaderPin)+"-"+s.GPIO.PinInfo.Name, " ", "-"), "_", "-")
+func (s *Solenoid) setID() {
+	//HeaderPin is unique per micro, but this may need to be revisited for components requiring more than 1 HeaderPin
+	s.UID = s.HeaderPin
 }
 
 //Enable and optionally initialize this Solenoid
@@ -61,7 +61,7 @@ func (s *Solenoid) String() string {
 		metaString = utilities.LabelString("Metadata", string(metadata))
 	}
 	return "\nSolenoid Device:" +
-		utilities.LabelString("UID", s.UID) +
+		utilities.LabelString("UID", strconv.Itoa(s.UID)) +
 		utilities.LabelString("Name", s.Name) +
 		utilities.LabelString("Header Pin", strconv.Itoa(s.HeaderPin)) +
 		utilities.LabelString("Enabled", strconv.FormatBool(s.Enabled)) +

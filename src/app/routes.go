@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -71,7 +72,8 @@ func (a *Application) getComponents(c echo.Context) error {
 	components := make(map[string]component.Solenoid, count)
 	for i := 0; i < len(a.Cluster.SlaveDevices); i++ {
 		for j := 0; j < len(a.Cluster.SlaveDevices[i].Solenoids); j++ {
-			components[a.Cluster.SlaveDevices[i].Solenoids[j].UID] = a.Cluster.SlaveDevices[i].Solenoids[j]
+			key := strconv.Itoa(a.Cluster.SlaveDevices[i].Solenoids[j].UID)
+			components[key] = a.Cluster.SlaveDevices[i].Solenoids[j]
 		}
 	}
 	container["components"] = components

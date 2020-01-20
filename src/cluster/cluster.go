@@ -177,9 +177,9 @@ func (c *Cluster) JoinNetwork(URL string) error {
 
 //generateUniqueID returns a unique id for asigning to a new microcontroller
 func (c *Cluster) generateUniqueID() int {
-	randID := rand.Intn(100)
+	randID := rand.Intn(255)
 	for len(c.getSlavesByID(randID)) > 0 {
-		randID = rand.Intn(100)
+		randID = rand.Intn(255)
 	}
 	return randID
 }

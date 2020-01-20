@@ -2,7 +2,7 @@ package component
 
 /*BaseComponent object definition */
 type BaseComponent struct {
-	UID       string
+	UID       int
 	Enabled   bool
 	Name      string                 `yaml:"name"`
 	HeaderPin int                    `yaml:"header_pin"`
