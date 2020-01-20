@@ -1,7 +1,6 @@
 package component
 
 import (
-	"encoding/json"
 	"firecontroller/io"
 	"firecontroller/utilities"
 	"log"
@@ -53,12 +52,9 @@ func (s *Solenoid) Disable() {
 }
 
 func (s *Solenoid) String() string {
-	metadata, err := json.Marshal(s.Metadata)
-	metaString := ""
+	metadata, err := utilities.StringJSON(s.Metadata)
 	if err != nil {
 		log.Println("failed to unmarshal metadata: ", string(metadata), err)
-	} else {
-		metaString = utilities.LabelString("Metadata", string(metadata))
 	}
 	return "\nSolenoid Device:" +
 		utilities.LabelString("UID", strconv.Itoa(s.UID)) +
@@ -67,7 +63,7 @@ func (s *Solenoid) String() string {
 		utilities.LabelString("Enabled", strconv.FormatBool(s.Enabled)) +
 		utilities.LabelString("Type", string(s.Type)) +
 		utilities.LabelString("Mode", string(s.Mode)) +
-		utilities.LabelString("Gpio", s.GPIO.String()) + metaString
+		utilities.LabelString("Gpio", s.GPIO.String()) + metadata
 
 }
 

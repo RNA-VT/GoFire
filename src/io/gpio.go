@@ -1,7 +1,6 @@
 package io
 
 import (
-	"encoding/json"
 	"errors"
 	"firecontroller/io/mock"
 	"firecontroller/utilities"
@@ -32,11 +31,9 @@ type GpioPin interface {
 
 func (g *Gpio) String() string {
 	var pinString string
-	json, err := json.Marshal(g.Pin)
+	pinString, err := utilities.StringJSON(g.Pin)
 	if err != nil {
 		pinString = err.Error()
-	} else {
-		pinString = string(json)
 	}
 	return utilities.LabelString("\tFAILED", strconv.FormatBool(g.Failed)) +
 		utilities.LabelString("\tPin", pinString) +

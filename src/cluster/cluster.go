@@ -3,11 +3,14 @@ package cluster
 import (
 	"bytes"
 	"encoding/json"
+	"firecontroller/component"
 	mc "firecontroller/microcontroller"
+	"firecontroller/utilities"
 	"log"
 	"math/rand"
 	"net/http"
 	"net/url"
+	"strconv"
 
 	"github.com/spf13/viper"
 )
@@ -18,6 +21,14 @@ type Cluster struct {
 	SlaveDevices []mc.Microcontroller
 	MasterDevice mc.Microcontroller
 	Me           mc.Microcontroller
+}
+
+func (c *Cluster) String() string {
+	cluster, err := utilities.StringJSON(c)
+	if err != nil {
+		return ""
+	}
+	return cluster
 }
 
 //Start registers this microcontroller, retrieves cluster config, loads local components and verifies peers
@@ -36,7 +47,7 @@ func (c *Cluster) Start() {
 func (c *Cluster) UpdatePeers(urlPath string, message PeerUpdateMessage, excludeDevices []mc.Microcontroller) error {
 	for i := 0; i < len(c.SlaveDevices); i++ {
 		if !isExcluded(c.SlaveDevices[i], excludeDevices) {
-			body, err := json.Marshal(message)
+			body, err := utilities.JSON(message)
 			if err != nil {
 				log.Println("Failed to convert cluster to json: ", c)
 				return err
@@ -72,6 +83,26 @@ func (c *Cluster) NewDevice(host string, port string) (mc.Microcontroller, error
 	}
 	return micro, nil
 
+}
+
+//GetComponents builds a map of all the components in the cluster by a cluster wide unique key
+func (c *Cluster) GetComponents() map[string]component.Solenoid {
+	components := make(map[string]component.Solenoid, c.countComponents())
+	for i := 0; i < len(c.SlaveDevices); i++ {
+		for j := 0; j < len(c.SlaveDevices[i].Solenoids); j++ {
+			key := strconv.Itoa(c.SlaveDevices[i].ID) + "-" + strconv.Itoa(c.SlaveDevices[i].Solenoids[j].UID)
+			components[key] = c.SlaveDevices[i].Solenoids[j]
+		}
+	}
+	return components
+}
+func (c *Cluster) countComponents() int {
+	count := 0
+	for i := 0; i < len(c.SlaveDevices); i++ {
+		count += len(c.SlaveDevices[i].Solenoids)
+	}
+
+	return count
 }
 
 //******************************************************************************************************
@@ -191,19 +222,6 @@ func (c *Cluster) getSlavesByID(targetID int) []mc.Microcontroller {
 	for i := 0; i < len(c.SlaveDevices); i++ {
 		if c.SlaveDevices[i].ID == targetID {
 			return append(micros, c.SlaveDevices[i])
-		}
-	}
-
-	return micros
-}
-
-// GetAllSlavesByIP find all slave micro by its IP
-func (c *Cluster) GetAllSlavesByIP(host string) []mc.Microcontroller {
-	var micros []mc.Microcontroller
-
-	for i := 0; i < len(c.SlaveDevices); i++ {
-		if c.SlaveDevices[i].Host == host {
-			micros = append(micros, c.SlaveDevices[i])
 		}
 	}
 
