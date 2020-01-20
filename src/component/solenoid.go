@@ -6,6 +6,7 @@ import (
 	"firecontroller/utilities"
 	"log"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -19,18 +20,31 @@ type Solenoid struct {
 
 //Init - Enable, set initial value, log solenoid initial state
 func (s *Solenoid) Init() error {
-	s.Enable(true)
+	err := s.Enable(true)
+	if err != nil {
+		return err
+	}
+	//Create UUID now that GPIO is initilized
+	s.buildUID()
 	log.Println("Enabled and Initialized Solenoid:", s.String())
-	//TODO: Look into what feedback we can get on gpio init
+
 	return nil
 }
 
+func (s *Solenoid) buildUID() {
+	s.UID = strings.ReplaceAll(strings.ReplaceAll("solenoid-"+string(s.Mode)+"-"+s.Name+"-"+strconv.Itoa(s.HeaderPin)+"-"+s.GPIO.PinInfo.Name, " ", "-"), "_", "-")
+}
+
 //Enable and optionally initialize this Solenoid
-func (s *Solenoid) Enable(init bool) {
+func (s *Solenoid) Enable(init bool) error {
 	s.Enabled = true
 	if init {
-		s.GPIO.Init(s.HeaderPin, false)
+		err := s.GPIO.Init(s.HeaderPin, false)
+		if err != nil {
+			return err
+		}
 	}
+	return nil
 }
 
 //Disable this solenoid
@@ -47,7 +61,7 @@ func (s *Solenoid) String() string {
 		metaString = utilities.LabelString("Metadata", string(metadata))
 	}
 	return "\nSolenoid Device:" +
-		utilities.LabelString("UID", strconv.Itoa(s.UID)) +
+		utilities.LabelString("UID", s.UID) +
 		utilities.LabelString("Name", s.Name) +
 		utilities.LabelString("Header Pin", strconv.Itoa(s.HeaderPin)) +
 		utilities.LabelString("Enabled", strconv.FormatBool(s.Enabled)) +
