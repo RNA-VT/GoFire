@@ -1,8 +1,6 @@
 package mock
 
 import (
-	"log"
-
 	"github.com/stianeikeland/go-rpio/v4"
 )
 
@@ -20,13 +18,12 @@ func (pin Pin) Output() {
 
 // High - Set pin High
 func (pin Pin) High() {
-	pin.RpioState = rpio.High
-	log.Println(pin.RpioState)
+	WritePin(pin, rpio.High)
 }
 
 // Low - Set pin Low
 func (pin Pin) Low() {
-	pin.RpioState = rpio.Low
+	WritePin(pin, rpio.Low)
 }
 
 // Toggle pin state

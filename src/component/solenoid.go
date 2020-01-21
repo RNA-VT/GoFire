@@ -69,7 +69,7 @@ func (s *Solenoid) String() string {
 
 //State returns a string of the current state of this solenoid
 func (s *Solenoid) State() string {
-	return "[GPIO PIN " + strconv.Itoa(s.HeaderPin)
+	return "[GPIO PIN " + strconv.Itoa(s.HeaderPin) + "]: " + s.GPIO.CurrentStateString()
 }
 
 //Open - Open the solenoid

@@ -27,7 +27,7 @@ func (a *Application) openSolenoid(c echo.Context) error {
 		return err
 	}
 	component.Open()
-	return c.JSON(http.StatusOK, component)
+	return c.JSON(http.StatusOK, component.State())
 }
 
 func (a *Application) fireSolenoid(c echo.Context) error {
@@ -51,7 +51,7 @@ func (a *Application) closeSolenoid(c echo.Context) error {
 		return err
 	}
 	component.Close(0)
-	return c.JSON(http.StatusOK, component)
+	return c.JSON(http.StatusOK, component.State())
 }
 func (a *Application) disableSolenoid(c echo.Context) error {
 	component, err := a.Cluster.GetComponent(c.Param("id"))
@@ -59,7 +59,7 @@ func (a *Application) disableSolenoid(c echo.Context) error {
 		return err
 	}
 	component.Disable()
-	return c.JSON(http.StatusOK, component)
+	return c.JSON(http.StatusOK, component.State())
 }
 
 func (a *Application) enableSolenoid(c echo.Context) error {
@@ -69,5 +69,5 @@ func (a *Application) enableSolenoid(c echo.Context) error {
 	}
 	//I Guess Always
 	component.Enable(true)
-	return c.JSON(http.StatusOK, component)
+	return c.JSON(http.StatusOK, component.State())
 }

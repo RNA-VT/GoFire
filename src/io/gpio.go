@@ -84,7 +84,7 @@ func (g *Gpio) CurrentStateString() string {
 	if g.Pin.Read() == rpio.High {
 		state = "ON"
 	}
-	return g.PinInfo.String() + "\n\t" + "State: " + state
+	return state
 }
 
 func (g *Gpio) loadPinInfoByHeader(headerPin int) error {
