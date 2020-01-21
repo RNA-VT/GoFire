@@ -15,7 +15,7 @@ func (a *Application) addRegistrationRoutes() {
 }
 
 func (a *Application) joinNetwork(c echo.Context) error {
-	log.Println("[master] Device asked to join cluster")
+	log.Println("[master] Microcontroller asked to join cluster")
 
 	body := c.Request().Body
 	decoder := json.NewDecoder(body)
@@ -25,7 +25,7 @@ func (a *Application) joinNetwork(c echo.Context) error {
 		log.Println("Error decoding Request Body", err)
 	}
 
-	response, err := a.Cluster.AddDevice(msg.ImNewHere)
+	response, err := a.Cluster.AddMicrocontroller(msg.ImNewHere)
 	if err != nil {
 		log.Println("Error Joining Cluster")
 	}

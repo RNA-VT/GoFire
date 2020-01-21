@@ -56,7 +56,7 @@ func (s *Solenoid) String() string {
 	if err != nil {
 		log.Println("failed to unmarshal metadata: ", string(metadata), err)
 	}
-	return "\nSolenoid Device:" +
+	return "\n[Component]: Solenoid" +
 		utilities.LabelString("UID", strconv.Itoa(s.UID)) +
 		utilities.LabelString("Name", s.Name) +
 		utilities.LabelString("Header Pin", strconv.Itoa(s.HeaderPin)) +
@@ -72,11 +72,22 @@ func (s *Solenoid) State() string {
 	return "[GPIO PIN " + strconv.Itoa(s.HeaderPin)
 }
 
-//Open - Open the solenoid for a set duration
-func (s *Solenoid) Open(duration int) {
+//Open - Open the solenoid
+func (s *Solenoid) Open() {
 	if s.Healthy() {
 		s.GPIO.Pin.High()
-		s.Close(duration)
+	} else {
+		//Log attempt to open unhealthy solenoid
+	}
+}
+
+//OpenFor - Open the solenoid for a set duration
+func (s *Solenoid) OpenFor(duration int) {
+	if s.Healthy() {
+		s.GPIO.Pin.High()
+		if duration > 0 {
+			s.Close(duration)
+		}
 	} else {
 		//Log attempt to open unhealthy solenoid
 	}
@@ -119,3 +130,6 @@ const (
 	//Outlet - propane exhaust solenoid
 	Outlet = "outlet"
 )
+
+//DoNotCloseDuration - placeholder
+const DoNotCloseDuration = -1

@@ -20,14 +20,12 @@ func (pin Pin) Output() {
 
 // High - Set pin High
 func (pin Pin) High() {
-	log.Println("High Attempt")
 	pin.RpioState = rpio.High
 	log.Println(pin.RpioState)
 }
 
 // Low - Set pin Low
 func (pin Pin) Low() {
-	log.Println("Low Attempt")
 	pin.RpioState = rpio.Low
 }
 
