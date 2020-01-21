@@ -4,16 +4,22 @@ import (
 	"github.com/stianeikeland/go-rpio/v4"
 )
 
-//Pin mocks an rpio.Pin object
-type Pin struct {
-	Pin       uint8
+//PinState -
+type PinState struct {
 	RpioMode  rpio.Mode
 	RpioState rpio.State
 }
 
+var localState PinState
+
+//Pin mocks an rpio.Pin object
+type Pin struct {
+	Pin uint8
+}
+
 // Output - Set pin as Output
 func (pin Pin) Output() {
-	pin.RpioMode = rpio.Output
+	localState.RpioMode = rpio.Output
 }
 
 // High - Set pin High
@@ -49,23 +55,23 @@ func (pin Pin) Read() rpio.State {
 // PinMode sets the mode of a given pin (Input, Output, Clock, Pwm or Spi)
 // Only Output is properly mocked right now
 func PinMode(pin Pin, mode rpio.Mode) {
-	pin.RpioMode = mode
+	localState.RpioMode = mode
 }
 
 // WritePin sets a given pin High or Low
 // by setting the clear or set registers respectively
 func WritePin(pin Pin, state rpio.State) {
-	pin.RpioState = state
+	localState.RpioState = state
 }
 
 // ReadPin - Read the state of a pin
 func ReadPin(pin Pin) rpio.State {
-	return pin.RpioState
+	return localState.RpioState
 }
 
 // TogglePin - Toggle a pin state (high -> low -> high)
 func TogglePin(pin Pin) {
-	if pin.RpioState == rpio.High {
+	if localState.RpioState == rpio.High {
 		pin.Low()
 	} else {
 		pin.High()
