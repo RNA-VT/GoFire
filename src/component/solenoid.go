@@ -75,7 +75,9 @@ func (s *Solenoid) State() string {
 //Open - Open the solenoid
 func (s *Solenoid) Open() {
 	if s.Healthy() {
+		log.Println(s.GPIO.Pin.Read(), s.State())
 		s.GPIO.Pin.High()
+		log.Println(s.GPIO.Pin.Read(), s.State())
 	} else {
 		//Log attempt to open unhealthy solenoid
 	}
