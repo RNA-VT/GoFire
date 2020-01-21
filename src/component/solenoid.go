@@ -63,7 +63,8 @@ func (s *Solenoid) String() string {
 		utilities.LabelString("Enabled", strconv.FormatBool(s.Enabled)) +
 		utilities.LabelString("Type", string(s.Type)) +
 		utilities.LabelString("Mode", string(s.Mode)) +
-		utilities.LabelString("Gpio", s.GPIO.String()) + metadata
+		utilities.LabelString("Gpio", s.GPIO.String()) +
+		utilities.LabelString("Metadata", metadata)
 
 }
 

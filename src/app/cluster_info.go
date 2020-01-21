@@ -44,13 +44,16 @@ func (a *Application) getComponents(c echo.Context) error {
 }
 
 func (a *Application) getComponent(c echo.Context) error {
-	id := c.Param("id")
-	components := a.Cluster.GetComponents()
-	component, ok := components[id]
-	if !ok {
-		return c.JSON(http.StatusOK, "Component Not Found")
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return err
 	}
-	return c.JSON(http.StatusOK, component)
+	for i := 0; i < len(a.Cluster.Me.Solenoids); i++ {
+		if a.Cluster.Me.Solenoids[i].UID == id {
+			return c.JSON(http.StatusOK, a.Cluster.Me.Solenoids[i])
+		}
+	}
+	return c.JSON(http.StatusNotFound, "ID Not Found")
 }
 
 func (a *Application) getComponentConfig(c echo.Context) error {

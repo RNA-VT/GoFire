@@ -111,7 +111,7 @@ func (c *Cluster) GetComponents() map[string]component.Solenoid {
 	components := make(map[string]component.Solenoid, c.countComponents())
 	for i := 0; i < len(c.SlaveMicrocontrolers); i++ {
 		for j := 0; j < len(c.SlaveMicrocontrolers[i].Solenoids); j++ {
-			key := strconv.Itoa(c.SlaveMicrocontrolers[i].ID) + "-" + strconv.Itoa(c.SlaveMicrocontrolers[i].Solenoids[j].UID)
+			key := strconv.Itoa(c.SlaveMicrocontrolers[i].Solenoids[j].UID)
 			components[key] = c.SlaveMicrocontrolers[i].Solenoids[j]
 		}
 	}
