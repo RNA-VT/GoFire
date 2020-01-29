@@ -35,6 +35,7 @@ func (c *Cluster) String() string {
 
 //Start registers this microcontroller, retrieves cluster config, loads local components and verifies peers
 func (c *Cluster) Start() {
+	//Set global ref to cluster
 	gofireMaster := viper.GetBool("GOFIRE_MASTER")
 	if gofireMaster {
 		log.Println("Master Mode Enabled!")
@@ -46,7 +47,7 @@ func (c *Cluster) Start() {
 }
 
 // UpdatePeers will take a byte slice and POST it to each microcontroller
-func (c *Cluster) UpdatePeers(urlPath string, message PeerUpdateMessage, exclude []mc.Microcontroller) error {
+func (c *Cluster) UpdatePeers(urlPath string, message interface{}, exclude []mc.Microcontroller) error {
 	for i := 0; i < len(c.SlaveMicrocontrolers); i++ {
 		if !isExcluded(c.SlaveMicrocontrolers[i], exclude) {
 			body, err := utilities.JSON(message)

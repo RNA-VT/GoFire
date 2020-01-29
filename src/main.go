@@ -4,6 +4,7 @@ package main
 import (
 	"firecontroller/app"
 	"firecontroller/cluster"
+	"firecontroller/utilities/lumberjack"
 	"fmt"
 
 	"github.com/labstack/echo"
@@ -35,9 +36,8 @@ func main() {
 		},
 		Echo: echo.New(),
 	}
-
+	lumberjack.Geoffrey.Init(&app.Cluster)
 	app.Cluster.Start()
-
 	app.ConfigureRoutes(fullHostname)
 }
 

@@ -76,11 +76,11 @@ func (s *Solenoid) State() string {
 //Open - Open the solenoid
 func (s *Solenoid) Open() {
 	if s.Healthy() {
-		log.Println(s.GPIO.Pin.Read(), s.State())
 		s.GPIO.Pin.High()
-		log.Println(s.GPIO.Pin.Read(), s.State())
 	} else {
+		//TODO: should we fail the pin/component here?
 		//Log attempt to open unhealthy solenoid
+		log.Println("*Cough* *Cough*, I don't think I'm going to make it in today...")
 	}
 }
 
@@ -98,14 +98,18 @@ func (s *Solenoid) OpenFor(duration int) {
 
 //Close - Close the solenoid, optionally after a delay
 func (s *Solenoid) Close(delay int) {
+	//TODO: Failing to Close a Solenoid is a pretty bad situation
 	if s.Healthy() {
 		if duration, err := time.ParseDuration(strconv.Itoa(delay) + "ms"); err == nil {
 			time.AfterFunc(duration, s.GPIO.Pin.Low)
 		} else {
 			//Log Failure to Close
+			log.Println("[OHNOWHATSENDHELP]: Failed to Close a Solenoid due to an invalid or malformed delay time. \n~~~~Closing now~~~~")
+			s.GPIO.Pin.Low()
 		}
 	} else {
 		//Log attempt to close unhealthy
+		log.Println("[OHNOWHATSENDHELP]: Failed to Close a Solenoid! It's unhealthy and cannot be commanded.")
 	}
 }
 
