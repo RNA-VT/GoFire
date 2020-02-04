@@ -73,21 +73,6 @@ func (c *Cluster) UpdatePeers(urlPath string, message interface{}, exclude []mc.
 	return nil
 }
 
-//NewMicrocontroller -
-func (c *Cluster) NewMicrocontroller(host string, port string) (mc.Microcontroller, error) {
-	micro := mc.Microcontroller{
-		ID:   c.generateUniqueID(),
-		Host: host,
-		Port: port,
-	}
-	err := micro.LoadSolenoids()
-	if err != nil {
-		return mc.Microcontroller{}, err
-	}
-	return micro, nil
-
-}
-
 //GetMicrocontrollers returns a map[microcontrollerID]microcontroller of all Microcontrollers in the cluster
 func (c *Cluster) GetMicrocontrollers() map[int]microcontroller.Microcontroller {
 	micros := make(map[int]microcontroller.Microcontroller)
@@ -133,10 +118,11 @@ func (c *Cluster) countComponents() int {
 
 //KingMe makes this microcontroller the master
 func (c *Cluster) KingMe() {
-	me, err := c.NewMicrocontroller(viper.GetString("GOFIRE_MASTER_HOST"), viper.GetString("GOFIRE_MASTER_PORT"))
+	me, err := mc.NewMicrocontroller(viper.GetString("GOFIRE_MASTER_HOST"), viper.GetString("GOFIRE_MASTER_PORT"))
 	if err != nil {
 		log.Println("Failed to Create New Microcontroller:", err.Error())
 	}
+	me.ID = c.generateUniqueID()
 	c.Me = me
 	c.Master = me
 	//The master also serves
@@ -171,10 +157,11 @@ func (c *Cluster) AddMicrocontroller(newMC mc.Microcontroller) (response PeerUpd
 
 //ALifeOfServitude is all that awaits this microcontroller
 func (c *Cluster) ALifeOfServitude() {
-	me, err := c.NewMicrocontroller(viper.GetString("GOFIRE_HOST"), viper.GetString("GOFIRE_PORT"))
+	me, err := mc.NewMicrocontroller(viper.GetString("GOFIRE_HOST"), viper.GetString("GOFIRE_PORT"))
 	if err != nil {
 		log.Println("Failed to Create New Microcontroller:", err.Error())
 	}
+	me.ID = c.generateUniqueID()
 	c.Me = me
 	masterHostname := viper.GetString("GOFIRE_MASTER_HOST") + ":" + viper.GetString("GOFIRE_MASTER_PORT")
 	//Try and Connect to the Master

@@ -35,6 +35,20 @@ func (m *Microcontroller) Init() error {
 	return nil
 }
 
+//NewMicrocontroller -
+func NewMicrocontroller(host string, port string) (Microcontroller, error) {
+	micro := Microcontroller{
+		Host: host,
+		Port: port,
+	}
+	err := micro.LoadSolenoids()
+	if err != nil {
+		return Microcontroller{}, err
+	}
+	return micro, nil
+
+}
+
 //ToFullAddress returns a network address including the ip address and port that this micro is listening on
 func (m *Microcontroller) ToFullAddress() string {
 	/* Just for pretty printing the micro info */
