@@ -10,13 +10,15 @@ func (a APIService) addErrorRoutes(e *echo.Echo, version string) {
 }
 
 func (a APIService) getErrors(c echo.Context) error {
-
+	return nil
 }
 
 func (a APIService) handleWarning(c echo.Context) error {
 	//a.Cluster.ReceiveWarning()
+	return nil
 }
 
 func (a APIService) handlePanic(c echo.Context) error {
 	//a.Cluster.ReceivePanic()
+	return nil
 }
