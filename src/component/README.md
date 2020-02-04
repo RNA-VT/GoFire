@@ -8,3 +8,17 @@
   - Modes:
     - Supply: Solenoid that controls a fuel tank, transport line or manifold inlet.
     - Outlet: exit from the pressurized system. Pilots, poofers and maybe some kind of venting. 
+  
+### Future Work
+- Igniter
+- LED Driver
+- Motors 
+- Servos
+- Inputs
+  - ArtNet
+  - Accels
+  - Gyros
+  - Other Sensors
+  - Polling inputs from other micros
+- Component Health Checks
+  - Match in memory state per component to read state after commanded changes

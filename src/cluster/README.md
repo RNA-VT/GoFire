@@ -6,3 +6,8 @@
     - If this microcontroller is in master mode, managing de/registration of other microcontrollers, Id generation and handling commands for local components. 
     - If this microcontroller is in slave mode, reporting to master and handling commands for local components. 
 
+  ## Future Work:
+  - Microcontroller Deregistration (Graceful exit)
+  - Broadcast all stop (Safety event)
+  - Heartbeat - Master polls slaves at an interval and deregisters non responsive nodes
+  - Retries for all registration events
