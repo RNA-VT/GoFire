@@ -48,7 +48,6 @@ func NewMicrocontroller(host string, port string) (Microcontroller, error) {
 	return micro, nil
 
 }
-
 //ToFullAddress returns a network address including the ip address and port that this micro is listening on
 func (m *Microcontroller) ToFullAddress() string {
 	/* Just for pretty printing the micro info */
