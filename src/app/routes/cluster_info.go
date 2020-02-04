@@ -1,4 +1,4 @@
-package app
+package routes
 
 import (
 	"io/ioutil"
@@ -9,24 +9,25 @@ import (
 	"github.com/labstack/echo"
 )
 
-func (a *Application) addInfoRoutes() {
-	a.Echo.GET("/cluster_info", a.getClusterInfo)
-	a.Echo.GET("/microcontroller", a.getMicrocontrollers)
-	a.Echo.GET("/microcontroller/:id", a.getMicrocontroller)
-	a.Echo.GET("/component", a.getComponents)
-	a.Echo.GET("/component/:id", a.getComponent)
-	a.Echo.GET("/config", a.getComponentConfig)
+func (a APIService) addInfoRoutes(e *echo.Echo) {
+	api := e.Group("/v1")
+	api.GET("/cluster_info", a.getClusterInfo)
+	api.GET("/microcontroller", a.getMicrocontrollers)
+	api.GET("/microcontroller/:id", a.getMicrocontroller)
+	api.GET("/component", a.getComponents)
+	api.GET("/component/:id", a.getComponent)
+	api.GET("/config", a.getComponentConfig)
 }
 
-func (a *Application) getClusterInfo(c echo.Context) error {
+func (a APIService) getClusterInfo(c echo.Context) error {
 	return c.JSON(http.StatusOK, a.Cluster)
 }
 
-func (a *Application) getMicrocontrollers(c echo.Context) error {
+func (a APIService) getMicrocontrollers(c echo.Context) error {
 	return c.JSON(http.StatusOK, a.Cluster.SlaveMicrocontrolers)
 }
 
-func (a *Application) getMicrocontroller(c echo.Context) error {
+func (a APIService) getMicrocontroller(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return c.JSON(http.StatusTeapot, "Fuck")
@@ -39,11 +40,11 @@ func (a *Application) getMicrocontroller(c echo.Context) error {
 	return c.JSON(http.StatusOK, micro)
 }
 
-func (a *Application) getComponents(c echo.Context) error {
+func (a APIService) getComponents(c echo.Context) error {
 	return c.JSON(http.StatusOK, a.Cluster.GetComponents())
 }
 
-func (a *Application) getComponent(c echo.Context) error {
+func (a APIService) getComponent(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return err
@@ -56,7 +57,7 @@ func (a *Application) getComponent(c echo.Context) error {
 	return c.JSON(http.StatusNotFound, "ID Not Found")
 }
 
-func (a *Application) getComponentConfig(c echo.Context) error {
+func (a APIService) getComponentConfig(c echo.Context) error {
 	yamlFile, err := ioutil.ReadFile("./app/config/solenoids.yaml")
 	if err != nil {
 		log.Printf("yamlFile.Get err   #%v ", err)

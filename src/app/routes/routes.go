@@ -1,6 +1,7 @@
-package app
+package routes
 
 import (
+	"firecontroller/cluster"
 	"log"
 	"net/http"
 
@@ -8,26 +9,35 @@ import (
 	"github.com/labstack/echo/middleware"
 )
 
+//APIService -
+type APIService struct {
+	Cluster *cluster.Cluster
+}
+
+//API - Container object for API worker methods
+var API APIService
+
 // ConfigureRoutes will use Echo to start listening on the appropriate paths
-func (a *Application) ConfigureRoutes(listenURL string) {
+func ConfigureRoutes(listenURL string, e *echo.Echo) {
 
 	// Middleware
-	a.Echo.Use(middleware.Logger())
-	a.Echo.Use(middleware.Recover())
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 
 	// CORS restricted
 	// Allows requests from any `https://labstack.com` or `https://labstack.net` origin
 	// wth GET, PUT, POST or DELETE method.
-	a.Echo.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
 	}))
 
 	// Routes
-	a.Echo.GET("/", a.defaultGet)
+	e.GET("/", API.defaultGet)
+	e.GET("/v1", API.defaultGet)
 
-	a.addRegistrationRoutes()
-	a.addInfoRoutes()
-	a.addCommandRoutes()
+	API.addRegistrationRoutes(e)
+	API.addInfoRoutes(e)
+	API.addCommandRoutes(e)
 
 	log.Println("Configure routes listening on " + listenURL)
 
@@ -36,11 +46,10 @@ func (a *Application) ConfigureRoutes(listenURL string) {
 	log.Println("***************************************")
 
 	// Start server
-	a.Echo.Logger.Fatal(a.Echo.Start(listenURL))
+	e.Logger.Fatal(e.Start(listenURL))
 }
 
-func (a *Application) defaultGet(c echo.Context) error {
+func (a APIService) defaultGet(c echo.Context) error {
 	log.Println("Someone is touching me")
-
 	return c.String(http.StatusOK, "Help Me! I'm trapped in the Server! You're the only one receiving this message.")
 }
