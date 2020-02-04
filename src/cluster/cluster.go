@@ -230,9 +230,10 @@ func (c *Cluster) JoinNetwork(URL string) error {
 
 //generateUniqueID returns a unique id for asigning to a new microcontroller
 func (c *Cluster) generateUniqueID() int {
-	randID := rand.Intn(255)
+	limit := viper.GetInt("MICROCONTORLLER_LIMIT")
+	randID := rand.Intn(limit)
 	for len(c.getSlavesByID(randID)) > 0 {
-		randID = rand.Intn(255)
+		randID = rand.Intn(limit)
 	}
 	return randID
 }

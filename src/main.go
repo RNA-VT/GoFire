@@ -63,4 +63,5 @@ func configureEnvironment() {
 	viper.SetDefault("GOFIRE_MASTER_HOST", "127.0.0.1")
 	viper.SetDefault("GOFIRE_MOCK_GPIO", true)
 	viper.SetDefault("CLUSTER_NAME", "MasterOfHot")
+	viper.SetDefault("MICROCONTORLLER_LIMIT", 255)
 }
