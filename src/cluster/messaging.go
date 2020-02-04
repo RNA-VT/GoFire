@@ -3,6 +3,7 @@ package cluster
 import (
 	"firecontroller/microcontroller"
 	mc "firecontroller/microcontroller"
+	"log"
 )
 
 //JoinNetworkMessage is the registration request
@@ -67,4 +68,18 @@ func (c *Cluster) tellTheOthers(path string, msg interface{}) {
 		path,
 		msg,
 		[]microcontroller.Microcontroller{c.Me})
+}
+
+func (c *Cluster) ReceiveWarning(src mc.Microcontroller, msgs ...string) {
+	//Deregister Microcontroller
+	log.Println("Deregistering Cluster: ", src.String())
+	//log msgs to console
+	for msg := range msgs {
+		log.Println(msg)
+	}
+}
+
+func (c *Cluster) ReceivePanic(msgs ...string) {
+	//Ensure that Panic reaches all Micros...
+	c.ClusterError(true, true, msgs...)
 }
