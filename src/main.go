@@ -3,8 +3,8 @@ package main
 /* Al useful imports */
 import (
 	"firecontroller/app"
+	"firecontroller/app/routes"
 	"firecontroller/cluster"
-	"firecontroller/utilities/lumberjack"
 	"fmt"
 
 	"github.com/labstack/echo"
@@ -36,9 +36,11 @@ func main() {
 		},
 		Echo: echo.New(),
 	}
-	lumberjack.Geoffrey.Init(&app.Cluster)
+	routes.API = routes.APIService{
+		Cluster: &app.Cluster,
+	}
 	app.Cluster.Start()
-	app.ConfigureRoutes(fullHostname)
+	routes.ConfigureRoutes(fullHostname, app.Echo)
 }
 
 func configureEnvironment() {
