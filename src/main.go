@@ -3,7 +3,6 @@ package main
 /* Al useful imports */
 import (
 	"firecontroller/app"
-	"firecontroller/app/routes"
 	"firecontroller/cluster"
 	"firecontroller/routes"
 	"fmt"
