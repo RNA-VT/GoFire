@@ -7,8 +7,8 @@ import (
 	"github.com/labstack/echo"
 )
 
-func (a APIService) addCommandRoutes(e *echo.Echo) {
-	api := e.Group("/v1")
+func (a APIService) addCommandRoutes(e *echo.Echo, version string) {
+	api := e.Group("/v" + version)
 	api.GET("/cmd", a.getCommands)
 	api.GET("/component/:id/fire/:duration", a.fireSolenoid)
 	api.GET("/component/:id/open", a.openSolenoid)

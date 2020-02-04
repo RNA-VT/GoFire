@@ -9,8 +9,8 @@ import (
 	"github.com/labstack/echo"
 )
 
-func (a APIService) addInfoRoutes(e *echo.Echo) {
-	api := e.Group("/v1")
+func (a APIService) addInfoRoutes(e *echo.Echo, version string) {
+	api := e.Group("/v" + version)
 	api.GET("/cluster_info", a.getClusterInfo)
 	api.GET("/microcontroller", a.getMicrocontrollers)
 	api.GET("/microcontroller/:id", a.getMicrocontroller)

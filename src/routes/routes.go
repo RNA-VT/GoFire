@@ -17,6 +17,8 @@ type APIService struct {
 //API - Container object for API worker methods
 var API APIService
 
+const apiVersion = "1"
+
 // ConfigureRoutes will use Echo to start listening on the appropriate paths
 func ConfigureRoutes(listenURL string, e *echo.Echo) {
 
@@ -30,14 +32,13 @@ func ConfigureRoutes(listenURL string, e *echo.Echo) {
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
 	}))
-
 	// Routes
 	e.GET("/", API.defaultGet)
-	e.GET("/v1", API.defaultGet)
+	e.GET("/v"+apiVersion, API.defaultGet)
 
-	API.addRegistrationRoutes(e)
-	API.addInfoRoutes(e)
-	API.addCommandRoutes(e)
+	API.addRegistrationRoutes(e, apiVersion)
+	API.addInfoRoutes(e, apiVersion)
+	API.addCommandRoutes(e, apiVersion)
 
 	log.Println("Configure routes listening on " + listenURL)
 

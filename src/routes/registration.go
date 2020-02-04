@@ -9,8 +9,8 @@ import (
 	"github.com/labstack/echo"
 )
 
-func (a APIService) addRegistrationRoutes(e *echo.Echo) {
-	api := e.Group("/v1")
+func (a APIService) addRegistrationRoutes(e *echo.Echo, version string) {
+	api := e.Group("/v" + version)
 	api.POST("/", a.peerUpdate)
 	api.POST("/join_network", a.joinNetwork)
 }
