@@ -42,8 +42,10 @@ func (c *Cluster) ALifeOfServitude() {
 func (c *Cluster) JoinNetwork(URL string) error {
 	parsedURL, err := url.Parse("http://" + URL + "/join_network")
 	log.Println("Trying to Join: " + parsedURL.String())
+
 	msg := JoinNetworkMessage{
-		ImNewHere: *Me,
+		ImNewHere:   *Me,
+		BaseMessage: NewMessageBase(),
 	}
 	body, err := json.Marshal(msg)
 	if err != nil {

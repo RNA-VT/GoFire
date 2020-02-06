@@ -32,9 +32,9 @@ func (c *Cluster) AddMicrocontroller(newMC mc.Microcontroller) (response PeerUpd
 	PrintClusterInfo(*c)
 
 	response = PeerUpdateMessage{
-		Cluster: *c,
+		Cluster:     *c,
+		BaseMessage: NewMessageBase(),
 	}
-	response.Source = *Me
 
 	exclusions := []mc.Microcontroller{newMC, *Me}
 	err = c.UpdatePeers("/", response, exclusions)

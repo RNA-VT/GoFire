@@ -20,7 +20,7 @@ type PeerErrorMessage struct {
 //PeerInfoMessage -
 type PeerInfoMessage struct {
 	Messages []string
-	BaseMessage
+	MessageBase
 }
 
 //JoinNetworkMessage is the registration request
@@ -41,10 +41,18 @@ type BaseMessage struct {
 	Created time.Time
 }
 
+//NewMessageBase -
+func NewMessageBase() BaseMessage {
+	return BaseMessage{
+		Source:  *Me,
+		Created: time.Now(),
+	}
+}
+
 //EverybodyHasToKnow - Meant for Errors that should stop the entire cluster
 func (c *Cluster) EverybodyHasToKnow(panicAfterWarning bool, panicCluster bool, MicrocontrollerToRemove mc.Microcontroller, notGoodThings ...string) {
 	var message PeerErrorMessage
-	message.Source = *Me
+	message.MessageBase = NewMessageBase()
 	message.Messages = notGoodThings
 	message.Panic = panicCluster
 	message.DeregisterMe = MicrocontrollerToRemove
