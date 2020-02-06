@@ -9,10 +9,10 @@ import (
 	"github.com/labstack/echo"
 )
 
-func (a APIService) addErrorRoutes(e *echo.Echo, version string) {
-	api := e.Group("/v" + version + "/errors")
-	api.GET("/", a.getErrors)
-	api.POST("/", a.handleConcern)
+func (a APIService) addErrorRoutes(e *echo.Echo) {
+	api := e.Group("/v1")
+	api.GET("/uhoh", a.getErrors)
+	api.POST("/uhoh", a.handleConcern)
 }
 
 func (a APIService) getErrors(c echo.Context) error {

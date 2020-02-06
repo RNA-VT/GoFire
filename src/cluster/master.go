@@ -21,22 +21,25 @@ func (c *Cluster) KingMe() {
 	Me = &me
 	c.Master = me
 	//The master also serves
-	c.SlaveMicrocontrolers = append(c.SlaveMicrocontrolers, me)
+	c.SlaveMicrocontrollers = append(c.SlaveMicrocontrollers, me)
 	//The Master waits ...
 }
 
 //AddMicrocontroller attempts to add a microcontroller to the cluster and returns the response data. This should only be run by the master.
-func (c *Cluster) AddMicrocontroller(newMC mc.Microcontroller) (response PeerUpdateMessage, err error) {
-	newMC.ID = c.generateUniqueID()
-	c.SlaveMicrocontrolers = append(c.SlaveMicrocontrolers, newMC)
+func (c *Cluster) AddMicrocontroller(newMC mc.Config) (response PeerUpdateMessage, err error) {
+	var newGuy mc.Microcontroller
+	newGuy.Load(newMC)
+	newGuy.ID = c.generateUniqueID()
+
+	c.SlaveMicrocontrollers = append(c.SlaveMicrocontrollers, newGuy)
 	PrintClusterInfo(*c)
 
 	response = PeerUpdateMessage{
-		Cluster: *c,
+		Cluster: c.GetConfig(),
 		Header:  GetHeader(),
 	}
 
-	exclusions := []mc.Microcontroller{newMC, *Me}
+	exclusions := []mc.Microcontroller{newGuy, *Me}
 	err = c.UpdatePeers("/", response, exclusions)
 	if err != nil {
 		log.Println("Unexpected Error during attempt to contact all peers: ", err)
@@ -48,12 +51,12 @@ func (c *Cluster) AddMicrocontroller(newMC mc.Microcontroller) (response PeerUpd
 
 //RemoveMicrocontroller -
 func (c *Cluster) RemoveMicrocontroller(ImDoneHere mc.Microcontroller) {
-	for index, mc := range c.SlaveMicrocontrolers {
+	for index, mc := range c.SlaveMicrocontrollers {
 		if mc.ID == ImDoneHere.ID {
-			s := c.SlaveMicrocontrolers
-			count := len(c.SlaveMicrocontrolers)
+			s := c.SlaveMicrocontrollers
+			count := len(c.SlaveMicrocontrollers)
 			s[count-1], s[index] = s[index], s[count-1]
-			c.SlaveMicrocontrolers = s[:len(s)-1]
+			c.SlaveMicrocontrollers = s[:len(s)-1]
 			return
 		}
 	}

@@ -9,8 +9,8 @@ import (
 	"github.com/labstack/echo"
 )
 
-func (a APIService) addRegistrationRoutes(e *echo.Echo, version string) {
-	api := e.Group("/v" + version)
+func (a APIService) addRegistrationRoutes(e *echo.Echo) {
+	api := e.Group("/v1")
 	api.POST("/", a.peerUpdate)
 	api.POST("/join_network", a.joinNetwork)
 }
@@ -51,7 +51,7 @@ func (a APIService) peerUpdate(c echo.Context) error {
 	//TODO: Inform Master of Bad Config
 
 	//Update my cluster
-	a.Cluster.LoadCluster(clustahUpdate.Cluster)
+	a.Cluster.Load(clustahUpdate.Cluster)
 
 	log.Println("Peer Update Completed")
 	return c.JSON(http.StatusOK, "Peer Update Successfully Received by : "+(*cluster.Me).String())

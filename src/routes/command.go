@@ -7,8 +7,8 @@ import (
 	"github.com/labstack/echo"
 )
 
-func (a APIService) addCommandRoutes(e *echo.Echo, version string) {
-	api := e.Group("/v" + version)
+func (a APIService) addCommandRoutes(e *echo.Echo) {
+	api := e.Group("/v1")
 	api.GET("/cmd", a.getCommands)
 	api.GET("/component/:id/fire/:duration", a.fireSolenoid)
 	api.GET("/component/:id/open", a.openSolenoid)
@@ -44,7 +44,7 @@ func (a APIService) fireSolenoid(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, "Component Not Found.")
 	}
 	component.OpenFor(duration)
-	return c.JSON(http.StatusOK, a.Cluster.SlaveMicrocontrolers)
+	return c.JSON(http.StatusOK, a.Cluster.SlaveMicrocontrollers)
 }
 func (a APIService) closeSolenoid(c echo.Context) error {
 	component, err := a.Cluster.GetComponent(c.Param("id"))

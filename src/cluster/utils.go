@@ -24,9 +24,9 @@ func (c Cluster) generateUniqueID() int {
 func (c Cluster) getSlavesByID(targetID int) []mc.Microcontroller {
 	var micros []mc.Microcontroller
 
-	for i := 0; i < len(c.SlaveMicrocontrolers); i++ {
-		if c.SlaveMicrocontrolers[i].ID == targetID {
-			return append(micros, c.SlaveMicrocontrolers[i])
+	for i := 0; i < len(c.SlaveMicrocontrollers); i++ {
+		if c.SlaveMicrocontrollers[i].ID == targetID {
+			return append(micros, c.SlaveMicrocontrollers[i])
 		}
 	}
 
@@ -50,9 +50,9 @@ func PrintClusterInfo(c Cluster) {
 
 	log.Println()
 
-	for i := 0; i < len(c.SlaveMicrocontrolers); i++ {
+	for i := 0; i < len(c.SlaveMicrocontrollers); i++ {
 		log.Println("----Peer---")
-		log.Println(c.SlaveMicrocontrolers[i])
+		log.Println(c.SlaveMicrocontrollers[i])
 	}
 	log.Println()
 }

@@ -31,11 +31,12 @@ func ConfigureRoutes(listenURL string, e *echo.Echo, API APIService) {
 	}))
 	// Routes
 	e.GET("/", API.defaultGet)
-	e.GET("/v"+apiVersion, API.defaultGet)
+	e.GET("/v1", API.defaultGet)
 
-	API.addRegistrationRoutes(e, apiVersion)
-	API.addInfoRoutes(e, apiVersion)
-	API.addCommandRoutes(e, apiVersion)
+	API.addRegistrationRoutes(e)
+	API.addInfoRoutes(e)
+	API.addErrorRoutes(e)
+	API.addCommandRoutes(e)
 
 	log.Println("Configure routes listening on " + listenURL)
 

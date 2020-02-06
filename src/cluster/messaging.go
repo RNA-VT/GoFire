@@ -25,26 +25,26 @@ type PeerInfoMessage struct {
 
 //JoinNetworkMessage is the registration request
 type JoinNetworkMessage struct {
-	ImNewHere mc.Microcontroller
+	ImNewHere mc.Config
 	Header    GoFireHeader
 }
 
 //PeerUpdateMessage contains a source and cluster info
 type PeerUpdateMessage struct {
-	Cluster Cluster
+	Cluster Config
 	Header  GoFireHeader
 }
 
 //GoFireHeader -
 type GoFireHeader struct {
-	Source  mc.Microcontroller
+	Source  mc.Config
 	Created time.Time
 }
 
 //GetHeader -
 func GetHeader() GoFireHeader {
 	return GoFireHeader{
-		Source:  *Me,
+		Source:  Me.GetConfig(),
 		Created: time.Now(),
 	}
 }
@@ -64,18 +64,18 @@ func (c Cluster) EverybodyHasToKnow(panicAfterWarning bool, panicCluster bool, M
 
 // UpdatePeers will take a byte slice and POST it to each microcontroller
 func (c Cluster) UpdatePeers(urlPath string, message interface{}, exclude []mc.Microcontroller) error {
-	for i := 0; i < len(c.SlaveMicrocontrolers); i++ {
-		if !isExcluded(c.SlaveMicrocontrolers[i], exclude) {
+	for i := 0; i < len(c.SlaveMicrocontrollers); i++ {
+		if !isExcluded(c.SlaveMicrocontrollers[i], exclude) {
 			body, err := utilities.JSON(message)
 			if err != nil {
 				log.Println("Failed to convert cluster to json: ", c)
 				return err
 			}
-			currURL := "http://" + c.SlaveMicrocontrolers[i].ToFullAddress() + urlPath
+			currURL := "http://" + c.SlaveMicrocontrollers[i].ToFullAddress() + "/v1/" + urlPath
 
 			resp, err := http.Post(currURL, "application/json", bytes.NewBuffer(body))
 			if err != nil {
-				log.Println("WARNING: Failed to POST to Peer: ", c.SlaveMicrocontrolers[i].String(), currURL)
+				log.Println("WARNING: Failed to POST to Peer: ", c.SlaveMicrocontrollers[i].String(), currURL)
 				log.Println(err)
 			} else {
 				defer resp.Body.Close()

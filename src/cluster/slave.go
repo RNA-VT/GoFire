@@ -39,12 +39,12 @@ func (c Cluster) ALifeOfServitude() {
 }
 
 // JoinNetwork checks if the master exists and joins the network
-func (c Cluster) JoinNetwork(URL string) error {
-	parsedURL, err := url.Parse("http://" + URL + "/join_network")
+func (c *Cluster) JoinNetwork(URL string) error {
+	parsedURL, err := url.Parse("http://" + URL + "/v1/join_network")
 	log.Println("Trying to Join: " + parsedURL.String())
 
 	msg := JoinNetworkMessage{
-		ImNewHere: *Me,
+		ImNewHere: Me.GetConfig(),
 		Header:    GetHeader(),
 	}
 	body, err := json.Marshal(msg)
@@ -72,16 +72,7 @@ func (c Cluster) JoinNetwork(URL string) error {
 		return err
 	}
 	//Update self with data from the master
-	c.LoadCluster(t.Cluster)
+	c.Load(t.Cluster)
 
 	return nil
-}
-
-//LoadCluster sets all Cluster values except for Me
-func (c *Cluster) LoadCluster(cluster Cluster) {
-	log.Println("Loading Updated Cluster Data...")
-	c.Name = cluster.Name
-	c.Master = cluster.Master
-	c.SlaveMicrocontrolers = cluster.SlaveMicrocontrolers
-	PrintClusterInfo(*c)
 }

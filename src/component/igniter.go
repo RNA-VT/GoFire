@@ -2,6 +2,11 @@ package component
 
 //Igniter - Thesr are hot... when we want them to be
 type Igniter struct {
+	IgniterConfig `yaml:",inline"`
+}
+
+//IgniterConfig -
+type IgniterConfig struct {
 	BaseComponent `yaml:",inline"`
 }
 

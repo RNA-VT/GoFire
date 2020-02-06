@@ -14,9 +14,37 @@ import (
 
 //Cluster - This object defines an array of microcontrollers
 type Cluster struct {
-	Name                 string
-	SlaveMicrocontrolers []mc.Microcontroller
-	Master               mc.Microcontroller
+	Name                  string
+	SlaveMicrocontrollers []mc.Microcontroller
+	Master                mc.Microcontroller
+}
+
+//Config -
+type Config struct {
+	Name                  string `yaml:"Name"`
+	SlaveMicrocontrollers []mc.Config
+	Master                mc.Config
+}
+
+//GetConfig -
+func (c Cluster) GetConfig() (config Config) {
+	config.Name = c.Name
+	config.Master = c.Master.GetConfig()
+	config.SlaveMicrocontrollers = make([]mc.Config, len(c.SlaveMicrocontrollers))
+	for i, micro := range c.SlaveMicrocontrollers {
+		config.SlaveMicrocontrollers[i] = micro.GetConfig()
+	}
+	return
+}
+
+//Load -
+func (c *Cluster) Load(config Config) {
+	c.Name = config.Name
+	c.Master.Load(config.Master)
+	c.SlaveMicrocontrollers = make([]mc.Microcontroller, len(config.SlaveMicrocontrollers))
+	for i, micro := range config.SlaveMicrocontrollers {
+		c.SlaveMicrocontrollers[i].Load(micro)
+	}
 }
 
 //Me - a reference to this micros instance in the slave list
@@ -31,7 +59,7 @@ func (c Cluster) String() string {
 }
 
 //Start registers this microcontroller, retrieves cluster config, loads local components and verifies peers
-func (c Cluster) Start() {
+func (c *Cluster) Start() {
 	//Set global ref to cluster
 	gofireMaster := viper.GetBool("GOFIRE_MASTER")
 	if gofireMaster {
@@ -46,8 +74,8 @@ func (c Cluster) Start() {
 //GetMicrocontrollers returns a map[microcontrollerID]microcontroller of all Microcontrollers in the cluster
 func (c Cluster) GetMicrocontrollers() map[int]microcontroller.Microcontroller {
 	micros := make(map[int]microcontroller.Microcontroller)
-	for i := 0; i < len(c.SlaveMicrocontrolers); i++ {
-		micros[c.SlaveMicrocontrolers[i].ID] = c.SlaveMicrocontrolers[i]
+	for i := 0; i < len(c.SlaveMicrocontrollers); i++ {
+		micros[c.SlaveMicrocontrollers[i].ID] = c.SlaveMicrocontrollers[i]
 	}
 	return micros
 }
@@ -65,18 +93,18 @@ func (c *Cluster) GetComponent(id string) (sol component.Solenoid, err error) {
 //GetComponents builds a map of all the components in the cluster by a cluster wide unique key
 func (c Cluster) GetComponents() map[string]component.Solenoid {
 	components := make(map[string]component.Solenoid, c.countComponents())
-	for i := 0; i < len(c.SlaveMicrocontrolers); i++ {
-		for j := 0; j < len(c.SlaveMicrocontrolers[i].Solenoids); j++ {
-			key := strconv.Itoa(c.SlaveMicrocontrolers[i].Solenoids[j].UID)
-			components[key] = c.SlaveMicrocontrolers[i].Solenoids[j]
+	for i := 0; i < len(c.SlaveMicrocontrollers); i++ {
+		for j := 0; j < len(c.SlaveMicrocontrollers[i].Solenoids); j++ {
+			key := strconv.Itoa(c.SlaveMicrocontrollers[i].Solenoids[j].UID)
+			components[key] = c.SlaveMicrocontrollers[i].Solenoids[j]
 		}
 	}
 	return components
 }
 func (c Cluster) countComponents() int {
 	count := 0
-	for i := 0; i < len(c.SlaveMicrocontrolers); i++ {
-		count += len(c.SlaveMicrocontrolers[i].Solenoids)
+	for i := 0; i < len(c.SlaveMicrocontrollers); i++ {
+		count += len(c.SlaveMicrocontrollers[i].Solenoids)
 	}
 
 	return count

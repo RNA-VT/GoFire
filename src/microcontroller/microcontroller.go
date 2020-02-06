@@ -15,12 +15,47 @@ type Microcontroller struct {
 	ID        int
 	Host      string
 	Port      string
-	Solenoids []component.Solenoid `yaml:"solenoids"`
+	Solenoids []component.Solenoid
+}
+
+//Config -
+type Config struct {
+	ID        int                        `yaml:"id"`
+	Host      string                     `yaml:"host"`
+	Port      string                     `yaml:"port"`
+	Solenoids []component.SolenoidConfig `yaml:"solenoids"`
+}
+
+//GetConfig -
+func (m Microcontroller) GetConfig() (config Config) {
+	config.ID = m.ID
+	config.Host = m.Host
+	config.Port = m.Port
+	config.Solenoids = make([]component.SolenoidConfig, len(m.Solenoids))
+	for i, sol := range m.Solenoids {
+		config.Solenoids[i] = sol.GetConfig()
+	}
+	return
+}
+
+//Load -
+func (m *Microcontroller) Load(config Config) {
+	m.ID = config.ID
+	m.Host = config.Host
+	m.Port = config.Port
+	m.Solenoids = make([]component.Solenoid, len(config.Solenoids))
+	for i, sol := range config.Solenoids {
+		m.Solenoids[i].Load(sol)
+	}
 }
 
 /*String Just for pretty printing the Microcontroller info */
 func (m Microcontroller) String() string {
-	return utilities.LabelString("Microcontroller", utilities.LabelString("Id", strconv.Itoa(m.ID))+utilities.LabelString("Host", m.Host)+utilities.LabelString("Port", m.Port)+utilities.LabelString("Solenoids", m.solenoidsString()))
+	return utilities.LabelString("Microcontroller",
+		utilities.LabelString("Id", strconv.Itoa(m.ID))+
+			utilities.LabelString("Host", m.Host)+
+			utilities.LabelString("Port", m.Port)+
+			utilities.LabelString("Solenoids", m.solenoidsString()))
 }
 
 //Init - Initialize all the components on this micro
