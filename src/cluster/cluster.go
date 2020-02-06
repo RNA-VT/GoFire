@@ -1,17 +1,12 @@
 package cluster
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
 	"firecontroller/component"
 	"firecontroller/microcontroller"
 	mc "firecontroller/microcontroller"
 	"firecontroller/utilities"
 	"log"
-	"math/rand"
-	"net/http"
-	"net/url"
 	"strconv"
 
 	"github.com/spf13/viper"
@@ -46,33 +41,6 @@ func (c *Cluster) Start() {
 		log.Println("Slave Mode Enabled.")
 		c.ALifeOfServitude()
 	}
-}
-
-// UpdatePeers will take a byte slice and POST it to each microcontroller
-func (c *Cluster) UpdatePeers(urlPath string, message interface{}, exclude []mc.Microcontroller) error {
-	for i := 0; i < len(c.SlaveMicrocontrolers); i++ {
-		if !isExcluded(c.SlaveMicrocontrolers[i], exclude) {
-			body, err := utilities.JSON(message)
-			if err != nil {
-				log.Println("Failed to convert cluster to json: ", c)
-				return err
-			}
-			currURL := "http://" + c.SlaveMicrocontrolers[i].ToFullAddress() + urlPath
-
-			resp, err := http.Post(currURL, "application/json", bytes.NewBuffer(body))
-			if err != nil {
-				log.Println("WARNING: Failed to POST to Peer: ", c.SlaveMicrocontrolers[i].String(), currURL)
-				log.Println(err)
-			} else {
-				defer resp.Body.Close()
-				var result string
-				decoder := json.NewDecoder(resp.Body)
-				decoder.Decode(&result)
-				log.Println("Result:", result)
-			}
-		}
-	}
-	return nil
 }
 
 //GetMicrocontrollers returns a map[microcontrollerID]microcontroller of all Microcontrollers in the cluster
@@ -112,187 +80,4 @@ func (c *Cluster) countComponents() int {
 	}
 
 	return count
-}
-
-//******************************************************************************************************
-//*******Master Only Methods****************************************************************************
-//******************************************************************************************************
-
-//KingMe makes this microcontroller the master
-func (c *Cluster) KingMe() {
-	me, err := mc.NewMicrocontroller(viper.GetString("GOFIRE_MASTER_HOST"), viper.GetString("GOFIRE_MASTER_PORT"))
-	if err != nil {
-		log.Println("Failed to Create New Microcontroller:", err.Error())
-	}
-	me.ID = c.generateUniqueID()
-	Me = &me
-	c.Master = me
-	//The master also serves
-	c.SlaveMicrocontrolers = append(c.SlaveMicrocontrolers, me)
-	//The Master waits ...
-}
-
-//AddMicrocontroller attempts to add a microcontroller to the cluster and returns the response data. This should only be run by the master.
-func (c *Cluster) AddMicrocontroller(newMC mc.Microcontroller) (response PeerUpdateMessage, err error) {
-	newMC.ID = c.generateUniqueID()
-	c.SlaveMicrocontrolers = append(c.SlaveMicrocontrolers, newMC)
-	c.PrintClusterInfo()
-
-	response = PeerUpdateMessage{
-		Cluster: *c,
-	}
-	response.Source = *Me
-
-	exclusions := []mc.Microcontroller{newMC, *Me}
-	err = c.UpdatePeers("/", response, exclusions)
-	if err != nil {
-		log.Println("Unexpected Error during attempt to contact all peers: ", err)
-		return PeerUpdateMessage{}, err
-	}
-
-	return response, nil
-}
-
-//RemoveMicrocontroller -
-func (c *Cluster) RemoveMicrocontroller(ImDoneHere mc.Microcontroller) {
-	for index, mc := range c.SlaveMicrocontrolers {
-		if mc.ID == ImDoneHere.ID {
-			s := c.SlaveMicrocontrolers
-			count := len(c.SlaveMicrocontrolers)
-			s[count-1], s[index] = s[index], s[count-1]
-			c.SlaveMicrocontrolers = s[:len(s)-1]
-			return
-		}
-	}
-}
-
-//******************************************************************************************************
-//*******Slave Only Methods*****************************************************************************
-//******************************************************************************************************
-
-//ALifeOfServitude is all that awaits this microcontroller
-func (c *Cluster) ALifeOfServitude() {
-	me, err := mc.NewMicrocontroller(viper.GetString("GOFIRE_HOST"), viper.GetString("GOFIRE_PORT"))
-	if err != nil {
-		log.Println("Failed to Create New Microcontroller:", err.Error())
-	}
-	me.ID = c.generateUniqueID()
-	Me = &me
-	masterHostname := viper.GetString("GOFIRE_MASTER_HOST") + ":" + viper.GetString("GOFIRE_MASTER_PORT")
-	//Try and Connect to the Master
-	err = test(masterHostname)
-	if err != nil {
-		log.Println("Failed to Reach Master Microcontroller: PANIC")
-		//TODO: Add Retry or failover maybe? panic for now
-		panic(err)
-	}
-	err = c.JoinNetwork(masterHostname)
-	if err != nil {
-		log.Println("Failed to Join Network: PANIC")
-		panic(err)
-	}
-}
-
-// JoinNetwork checks if the master exists and joins the network
-func (c *Cluster) JoinNetwork(URL string) error {
-	parsedURL, err := url.Parse("http://" + URL + "/join_network")
-	log.Println("Trying to Join: " + parsedURL.String())
-	msg := JoinNetworkMessage{
-		ImNewHere: *Me,
-	}
-	body, err := json.Marshal(msg)
-	if err != nil {
-		log.Println("Failed to create json message body")
-		return err
-	}
-	resp, err := http.Post(parsedURL.String(), "application/json", bytes.NewBuffer(body))
-
-	if err != nil {
-		log.Println("[test] Couldn't connect to master.", Me.ID)
-		log.Println(err)
-		return err
-	}
-	log.Println("Connected to master. Sending message to peers.")
-
-	defer resp.Body.Close()
-
-	decoder := json.NewDecoder(resp.Body)
-	var t PeerUpdateMessage
-	err = decoder.Decode(&t)
-	if err != nil {
-		log.Println("Failed to decode response from Master Microcontroller")
-		log.Println(err)
-		return err
-	}
-	//Update self with data from the master
-	c.LoadCluster(t.Cluster)
-
-	return nil
-}
-
-//generateUniqueID returns a unique id for asigning to a new microcontroller
-func (c *Cluster) generateUniqueID() int {
-	limit := viper.GetInt("MICROCONTORLLER_LIMIT")
-	randID := rand.Intn(limit)
-	for len(c.getSlavesByID(randID)) > 0 {
-		randID = rand.Intn(limit)
-	}
-	return randID
-}
-
-// getSlaveByID find all the slave for a given ID
-func (c *Cluster) getSlavesByID(targetID int) []mc.Microcontroller {
-	var micros []mc.Microcontroller
-
-	for i := 0; i < len(c.SlaveMicrocontrolers); i++ {
-		if c.SlaveMicrocontrolers[i].ID == targetID {
-			return append(micros, c.SlaveMicrocontrolers[i])
-		}
-	}
-
-	return micros
-}
-
-// PrintClusterInfo will cleanly print out info about the cluster
-func (c *Cluster) PrintClusterInfo() {
-	log.Println()
-	log.Println("====Master====")
-	log.Println(c.Master)
-
-	log.Println()
-
-	for i := 0; i < len(c.SlaveMicrocontrolers); i++ {
-		log.Println("----Peer---")
-		log.Println(c.SlaveMicrocontrolers[i])
-	}
-	log.Println()
-}
-
-//LoadCluster sets all Cluster values except for Me
-func (c *Cluster) LoadCluster(cluster Cluster) {
-	log.Println("Loading Updated Cluster Data...")
-	c.Name = cluster.Name
-	c.Master = cluster.Master
-	c.SlaveMicrocontrolers = cluster.SlaveMicrocontrolers
-	c.PrintClusterInfo()
-}
-
-func isExcluded(m mc.Microcontroller, exclusions []mc.Microcontroller) bool {
-	for i := 0; i < len(exclusions); i++ {
-		if m.Host == exclusions[i].Host && m.Port == exclusions[i].Port {
-			return true
-		}
-	}
-	return false
-}
-
-// test check if master exists
-func test(URL string) error {
-	parsedURL, err := url.Parse("http://" + URL)
-	if err != nil {
-		log.Println("Failed to Parse URL")
-		return err
-	}
-	_, err = http.Get(parsedURL.String())
-	return err
 }
