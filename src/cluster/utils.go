@@ -11,7 +11,7 @@ import (
 )
 
 //generateUniqueID returns a unique id for asigning to a new microcontroller
-func (c *Cluster) generateUniqueID() int {
+func (c Cluster) generateUniqueID() int {
 	limit := viper.GetInt("MICROCONTORLLER_LIMIT")
 	randID := rand.Intn(limit)
 	for len(c.getSlavesByID(randID)) > 0 {
@@ -21,7 +21,7 @@ func (c *Cluster) generateUniqueID() int {
 }
 
 // getSlaveByID find all the slave for a given ID
-func (c *Cluster) getSlavesByID(targetID int) []mc.Microcontroller {
+func (c Cluster) getSlavesByID(targetID int) []mc.Microcontroller {
 	var micros []mc.Microcontroller
 
 	for i := 0; i < len(c.SlaveMicrocontrolers); i++ {

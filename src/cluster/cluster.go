@@ -31,7 +31,7 @@ func (c *Cluster) String() string {
 }
 
 //Start registers this microcontroller, retrieves cluster config, loads local components and verifies peers
-func (c *Cluster) Start() {
+func (c Cluster) Start() {
 	//Set global ref to cluster
 	gofireMaster := viper.GetBool("GOFIRE_MASTER")
 	if gofireMaster {
@@ -44,7 +44,7 @@ func (c *Cluster) Start() {
 }
 
 //GetMicrocontrollers returns a map[microcontrollerID]microcontroller of all Microcontrollers in the cluster
-func (c *Cluster) GetMicrocontrollers() map[int]microcontroller.Microcontroller {
+func (c Cluster) GetMicrocontrollers() map[int]microcontroller.Microcontroller {
 	micros := make(map[int]microcontroller.Microcontroller)
 	for i := 0; i < len(c.SlaveMicrocontrolers); i++ {
 		micros[c.SlaveMicrocontrolers[i].ID] = c.SlaveMicrocontrolers[i]
@@ -63,7 +63,7 @@ func (c *Cluster) GetComponent(id string) (sol component.Solenoid, err error) {
 }
 
 //GetComponents builds a map of all the components in the cluster by a cluster wide unique key
-func (c *Cluster) GetComponents() map[string]component.Solenoid {
+func (c Cluster) GetComponents() map[string]component.Solenoid {
 	components := make(map[string]component.Solenoid, c.countComponents())
 	for i := 0; i < len(c.SlaveMicrocontrolers); i++ {
 		for j := 0; j < len(c.SlaveMicrocontrolers[i].Solenoids); j++ {
@@ -73,7 +73,7 @@ func (c *Cluster) GetComponents() map[string]component.Solenoid {
 	}
 	return components
 }
-func (c *Cluster) countComponents() int {
+func (c Cluster) countComponents() int {
 	count := 0
 	for i := 0; i < len(c.SlaveMicrocontrolers); i++ {
 		count += len(c.SlaveMicrocontrolers[i].Solenoids)

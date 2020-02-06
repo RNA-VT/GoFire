@@ -50,7 +50,7 @@ func NewMessageBase() BaseMessage {
 }
 
 //EverybodyHasToKnow - Meant for Errors that should stop the entire cluster
-func (c *Cluster) EverybodyHasToKnow(panicAfterWarning bool, panicCluster bool, MicrocontrollerToRemove mc.Microcontroller, notGoodThings ...string) {
+func (c Cluster) EverybodyHasToKnow(panicAfterWarning bool, panicCluster bool, MicrocontrollerToRemove mc.Microcontroller, notGoodThings ...string) {
 	var message PeerErrorMessage
 	message.MessageBase = NewMessageBase()
 	message.Messages = notGoodThings
@@ -63,7 +63,7 @@ func (c *Cluster) EverybodyHasToKnow(panicAfterWarning bool, panicCluster bool, 
 }
 
 // UpdatePeers will take a byte slice and POST it to each microcontroller
-func (c *Cluster) UpdatePeers(urlPath string, message interface{}, exclude []mc.Microcontroller) error {
+func (c Cluster) UpdatePeers(urlPath string, message interface{}, exclude []mc.Microcontroller) error {
 	for i := 0; i < len(c.SlaveMicrocontrolers); i++ {
 		if !isExcluded(c.SlaveMicrocontrolers[i], exclude) {
 			body, err := utilities.JSON(message)

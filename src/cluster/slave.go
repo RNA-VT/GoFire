@@ -16,7 +16,7 @@ import (
 //******************************************************************************************************
 
 //ALifeOfServitude is all that awaits this microcontroller
-func (c *Cluster) ALifeOfServitude() {
+func (c Cluster) ALifeOfServitude() {
 	me, err := mc.NewMicrocontroller(viper.GetString("GOFIRE_HOST"), viper.GetString("GOFIRE_PORT"))
 	if err != nil {
 		log.Println("Failed to Create New Microcontroller:", err.Error())
@@ -39,7 +39,7 @@ func (c *Cluster) ALifeOfServitude() {
 }
 
 // JoinNetwork checks if the master exists and joins the network
-func (c *Cluster) JoinNetwork(URL string) error {
+func (c Cluster) JoinNetwork(URL string) error {
 	parsedURL, err := url.Parse("http://" + URL + "/join_network")
 	log.Println("Trying to Join: " + parsedURL.String())
 
