@@ -19,7 +19,7 @@ type Microcontroller struct {
 }
 
 /*String Just for pretty printing the Microcontroller info */
-func (m *Microcontroller) String() string {
+func (m Microcontroller) String() string {
 	return utilities.LabelString("Microcontroller", utilities.LabelString("Id", strconv.Itoa(m.ID))+utilities.LabelString("Host", m.Host)+utilities.LabelString("Port", m.Port)+utilities.LabelString("Solenoids", m.solenoidsString()))
 }
 
@@ -50,7 +50,7 @@ func NewMicrocontroller(host string, port string) (Microcontroller, error) {
 }
 
 //ToFullAddress returns a network address including the ip address and port that this micro is listening on
-func (m *Microcontroller) ToFullAddress() string {
+func (m Microcontroller) ToFullAddress() string {
 	/* Just for pretty printing the micro info */
 	return m.Host + ":" + m.Port
 }
@@ -78,7 +78,7 @@ func (m *Microcontroller) LoadSolenoids() error {
 }
 
 //SolenoidsString assembles a string of all the Solenoids on this microcontroller.
-func (m *Microcontroller) solenoidsString() string {
+func (m Microcontroller) solenoidsString() string {
 	out := ""
 	for i := 0; i < len(m.Solenoids); i++ {
 		out += m.Solenoids[i].String()

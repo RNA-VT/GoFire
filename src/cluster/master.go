@@ -32,8 +32,8 @@ func (c *Cluster) AddMicrocontroller(newMC mc.Microcontroller) (response PeerUpd
 	PrintClusterInfo(*c)
 
 	response = PeerUpdateMessage{
-		Cluster:     *c,
-		BaseMessage: NewMessageBase(),
+		Cluster: *c,
+		Header:  GetHeader(),
 	}
 
 	exclusions := []mc.Microcontroller{newMC, *Me}

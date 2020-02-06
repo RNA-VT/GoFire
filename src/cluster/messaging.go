@@ -20,30 +20,30 @@ type PeerErrorMessage struct {
 //PeerInfoMessage -
 type PeerInfoMessage struct {
 	Messages []string
-	MessageBase
+	Header   GoFireHeader
 }
 
 //JoinNetworkMessage is the registration request
 type JoinNetworkMessage struct {
 	ImNewHere mc.Microcontroller
-	BaseMessage
+	Header    GoFireHeader
 }
 
 //PeerUpdateMessage contains a source and cluster info
 type PeerUpdateMessage struct {
 	Cluster Cluster
-	BaseMessage
+	Header  GoFireHeader
 }
 
-//BaseMessage -
-type BaseMessage struct {
+//GoFireHeader -
+type GoFireHeader struct {
 	Source  mc.Microcontroller
 	Created time.Time
 }
 
-//NewMessageBase -
-func NewMessageBase() BaseMessage {
-	return BaseMessage{
+//GetHeader -
+func GetHeader() GoFireHeader {
+	return GoFireHeader{
 		Source:  *Me,
 		Created: time.Now(),
 	}
@@ -52,10 +52,10 @@ func NewMessageBase() BaseMessage {
 //EverybodyHasToKnow - Meant for Errors that should stop the entire cluster
 func (c Cluster) EverybodyHasToKnow(panicAfterWarning bool, panicCluster bool, MicrocontrollerToRemove mc.Microcontroller, notGoodThings ...string) {
 	var message PeerErrorMessage
-	message.MessageBase = NewMessageBase()
 	message.Messages = notGoodThings
 	message.Panic = panicCluster
 	message.DeregisterMe = MicrocontrollerToRemove
+	message.Header = GetHeader()
 	c.UpdatePeers("errors", message, []mc.Microcontroller{*Me})
 	if panicAfterWarning {
 		panic(notGoodThings)

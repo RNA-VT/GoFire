@@ -11,7 +11,7 @@ type BaseComponent struct {
 	Metadata  map[string]interface{} `yaml:"metadata"`
 }
 
-func (b *BaseComponent) String() string {
+func (b BaseComponent) String() string {
 	jsonString, err := utilities.StringJSON(b)
 	if err != nil {
 		return "FailedtoStringify:" + b.Name

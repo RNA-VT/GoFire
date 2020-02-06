@@ -44,8 +44,8 @@ func (c Cluster) JoinNetwork(URL string) error {
 	log.Println("Trying to Join: " + parsedURL.String())
 
 	msg := JoinNetworkMessage{
-		ImNewHere:   *Me,
-		BaseMessage: NewMessageBase(),
+		ImNewHere: *Me,
+		Header:    GetHeader(),
 	}
 	body, err := json.Marshal(msg)
 	if err != nil {

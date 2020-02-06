@@ -22,7 +22,7 @@ type Cluster struct {
 //Me - a reference to this micros instance in the slave list
 var Me *mc.Microcontroller
 
-func (c *Cluster) String() string {
+func (c Cluster) String() string {
 	cluster, err := utilities.StringJSON(c)
 	if err != nil {
 		return ""

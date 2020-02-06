@@ -29,7 +29,7 @@ type GpioPin interface {
 	Read() rpio.State
 }
 
-func (g *Gpio) String() string {
+func (g Gpio) String() string {
 	var pinString string
 	pinString, err := utilities.StringJSON(g.Pin)
 	if err != nil {

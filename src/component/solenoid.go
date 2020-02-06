@@ -17,7 +17,7 @@ type Solenoid struct {
 }
 
 //Init - Enable, set initial value, log solenoid initial state
-func (s *Solenoid) Init() error {
+func (s Solenoid) Init() error {
 	err := s.Enable(true)
 	if err != nil {
 		return err
@@ -51,7 +51,7 @@ func (s *Solenoid) Disable() {
 	s.Enabled = false
 }
 
-func (s *Solenoid) String() string {
+func (s Solenoid) String() string {
 	metadata, err := utilities.StringJSON(s.Metadata)
 	if err != nil {
 		log.Println("failed to unmarshal metadata: ", string(metadata), err)
@@ -69,7 +69,7 @@ func (s *Solenoid) String() string {
 }
 
 //State returns a string of the current state of this solenoid
-func (s *Solenoid) State() string {
+func (s Solenoid) State() string {
 	return "[GPIO PIN " + strconv.Itoa(s.HeaderPin) + "]: " + s.GPIO.CurrentStateString()
 }
 
@@ -114,7 +114,7 @@ func (s *Solenoid) Close(delay int) {
 }
 
 //Healthy - true if this component is healthy
-func (s *Solenoid) Healthy() bool {
+func (s Solenoid) Healthy() bool {
 	return s.Enabled && !s.GPIO.Failed
 }
 

@@ -5,12 +5,12 @@ type Igniter struct {
 	BaseComponent `yaml:",inline"`
 }
 
-func (i *Igniter) String() string {
+func (i Igniter) String() string {
 	return ""
 }
 
 //State returns a string represnting the current state
-func (i *Igniter) State() string {
+func (i Igniter) State() string {
 	return ""
 }
 
