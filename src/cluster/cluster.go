@@ -114,12 +114,6 @@ func (c *Cluster) countComponents() int {
 	return count
 }
 
-//RemoveMicrocontroller -
-func RemoveMicrocontroller(s []mc.Microcontroller, i int) []mc.Microcontroller {
-	s[len(s)-1], s[i] = s[i], s[len(s)-1]
-	return s[:len(s)-1]
-}
-
 //******************************************************************************************************
 //*******Master Only Methods****************************************************************************
 //******************************************************************************************************
@@ -157,6 +151,19 @@ func (c *Cluster) AddMicrocontroller(newMC mc.Microcontroller) (response PeerUpd
 	}
 
 	return response, nil
+}
+
+//RemoveMicrocontroller -
+func (c *Cluster) RemoveMicrocontroller(ImDoneHere mc.Microcontroller) {
+	for index, mc := range c.SlaveMicrocontrolers {
+		if mc.ID == ImDoneHere.ID {
+			s := c.SlaveMicrocontrolers
+			count := len(c.SlaveMicrocontrolers)
+			s[count-1], s[index] = s[index], s[count-1]
+			c.SlaveMicrocontrolers = s[:len(s)-1]
+			return
+		}
+	}
 }
 
 //******************************************************************************************************

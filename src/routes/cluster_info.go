@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"firecontroller/cluster"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -49,9 +50,9 @@ func (a APIService) getComponent(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	for i := 0; i < len(a.Cluster.Me.Solenoids); i++ {
-		if a.Cluster.Me.Solenoids[i].UID == id {
-			return c.JSON(http.StatusOK, a.Cluster.Me.Solenoids[i])
+	for i := 0; i < len(cluster.Me.Solenoids); i++ {
+		if cluster.Me.Solenoids[i].UID == id {
+			return c.JSON(http.StatusOK, cluster.Me.Solenoids[i])
 		}
 	}
 	return c.JSON(http.StatusNotFound, "ID Not Found")

@@ -65,11 +65,7 @@ func (c *Cluster) ReceiveError(msg PeerErrorMessage) {
 	// TODO do better with this check
 	if msg.DeregisterMe.Host != "" {
 		//Deregister Microcontroller
-		log.Println("Deregistering Cluster: ", msg.DeregisterMe.String())
-		for index, mc := range c.SlaveMicrocontrolers {
-			if mc.ID == msg.DeregisterMe.ID {
-				c.SlaveMicrocontrolers = RemoveMicrocontroller(c.SlaveMicrocontrolers, index)
-			}
-		}
+		log.Println("Deregistering Microcontroller From Cluster: ", msg.DeregisterMe.String())
+		c.RemoveMicrocontroller(msg.DeregisterMe)
 	}
 }
