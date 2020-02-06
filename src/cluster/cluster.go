@@ -112,6 +112,12 @@ func (c *Cluster) countComponents() int {
 	return count
 }
 
+//RemoveMicrocontroller -
+func RemoveMicrocontroller(s []mc.Microcontroller, i int) []mc.Microcontroller {
+	s[len(s)-1], s[i] = s[i], s[len(s)-1]
+	return s[:len(s)-1]
+}
+
 //******************************************************************************************************
 //*******Master Only Methods****************************************************************************
 //******************************************************************************************************
@@ -137,9 +143,9 @@ func (c *Cluster) AddMicrocontroller(newMC mc.Microcontroller) (response PeerUpd
 	c.PrintClusterInfo()
 
 	response = PeerUpdateMessage{
-		Source:  c.Me,
 		Cluster: *c,
 	}
+	response.Source = c.Me
 
 	exclusions := []mc.Microcontroller{newMC, c.Me}
 	err = c.UpdatePeers("/", response, exclusions)

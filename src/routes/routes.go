@@ -14,13 +14,10 @@ type APIService struct {
 	Cluster *cluster.Cluster
 }
 
-//API - Container object for API worker methods
-var API APIService
-
 const apiVersion = "1"
 
 // ConfigureRoutes will use Echo to start listening on the appropriate paths
-func ConfigureRoutes(listenURL string, e *echo.Echo) {
+func ConfigureRoutes(listenURL string, e *echo.Echo, API APIService) {
 
 	// Middleware
 	e.Use(middleware.Logger())

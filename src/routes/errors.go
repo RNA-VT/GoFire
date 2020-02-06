@@ -1,24 +1,34 @@
 package routes
 
-import "github.com/labstack/echo"
+import (
+	"encoding/json"
+	"firecontroller/cluster"
+	"log"
+	"net/http"
+
+	"github.com/labstack/echo"
+)
 
 func (a APIService) addErrorRoutes(e *echo.Echo, version string) {
 	api := e.Group("/v" + version + "/errors")
 	api.GET("/", a.getErrors)
-	api.POST("/warn", a.handleWarning)
-	api.POST("/panic", a.handlePanic)
+	api.POST("/", a.handleConcern)
 }
 
 func (a APIService) getErrors(c echo.Context) error {
-	return nil
+	// TODO De-sass this endpoint
+	return c.JSON(http.StatusMethodNotAllowed, "Nothing has ever been wrong with anything.")
 }
 
-func (a APIService) handleWarning(c echo.Context) error {
-	//a.Cluster.ReceiveWarning()
-	return nil
-}
+func (a APIService) handleConcern(c echo.Context) error {
+	body, err := c.Request().GetBody()
+	if err != nil {
+		log.Println("Failed to get warning message body")
+	}
+	decoder := json.NewDecoder(body)
+	var msg cluster.PeerErrorMessage
+	err = decoder.Decode(&msg)
 
-func (a APIService) handlePanic(c echo.Context) error {
-	//a.Cluster.ReceivePanic()
-	return nil
+	a.Cluster.ReceiveError(msg)
+	return c.JSON(200, "")
 }

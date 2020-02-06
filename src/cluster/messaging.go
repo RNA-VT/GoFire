@@ -1,85 +1,75 @@
 package cluster
 
 import (
-	"firecontroller/microcontroller"
 	mc "firecontroller/microcontroller"
 	"log"
+	"time"
 )
-
-//JoinNetworkMessage is the registration request
-type JoinNetworkMessage struct {
-	ImNewHere mc.Microcontroller
-}
-
-//PeerUpdateMessage contains a source and cluster info
-type PeerUpdateMessage struct {
-	Source  mc.Microcontroller
-	Cluster Cluster
-}
 
 //PeerErrorMessage -
 type PeerErrorMessage struct {
-	Panic bool
+	Panic        bool
+	DeregisterMe mc.Microcontroller
 	PeerInfoMessage
 }
 
 //PeerInfoMessage -
 type PeerInfoMessage struct {
-	Source   mc.Microcontroller
 	Messages []string
+	BaseMessage
 }
 
-//ClusterError - Log the errors, warn the others and then panic.
-func (c *Cluster) ClusterError(panicAfterWarning bool, panicCluster bool, notGoodThings ...string) {
-	//Errors that render this microcontroller unusable, but do not effect the rest of the cluster
-	if panicCluster {
-		c.EverybodyPanic(notGoodThings...)
-	} else {
-		c.WarnTheOthers(notGoodThings...)
-	}
+//JoinNetworkMessage is the registration request
+type JoinNetworkMessage struct {
+	ImNewHere mc.Microcontroller
+	BaseMessage
+}
+
+//PeerUpdateMessage contains a source and cluster info
+type PeerUpdateMessage struct {
+	Cluster Cluster
+	BaseMessage
+}
+
+//BaseMessage -
+type BaseMessage struct {
+	Source  mc.Microcontroller
+	Created time.Time
+}
+
+//EverybodyHasToKnow - Meant for Errors that should stop the entire cluster
+func (c *Cluster) EverybodyHasToKnow(panicAfterWarning bool, panicCluster bool, MicrocontrollerToRemove mc.Microcontroller, notGoodThings ...string) {
+	var message PeerErrorMessage
+	message.Source = c.Me
+	message.Messages = notGoodThings
+	message.Panic = panicCluster
+	message.DeregisterMe = MicrocontrollerToRemove
+	c.UpdatePeers("errors", message, []mc.Microcontroller{c.Me})
 	if panicAfterWarning {
 		panic(notGoodThings)
 	}
 }
 
-//WarnTheOthers - POST Error(s) to cluster.
-func (c *Cluster) WarnTheOthers(msgs ...string) {
-	//This path should be used for errors that make this instance of GoFire unavailable
-	message := PeerErrorMessage{
-		Panic: false,
-	}
-	message.Source = c.Me
-	message.Messages = msgs
-	c.tellTheOthers("/errors/warn", message)
-}
-
-//EverybodyPanic - Meant for Errors that should stop the entire cluster
-func (c *Cluster) EverybodyPanic(notGoodThings ...string) {
-	message := PeerErrorMessage{
-		Panic: true,
-	}
-	message.Source = c.Me
-	message.Messages = notGoodThings
-	c.tellTheOthers("errors/panic", message)
-}
-
-func (c *Cluster) tellTheOthers(path string, msg interface{}) {
-	c.UpdatePeers(
-		path,
-		msg,
-		[]microcontroller.Microcontroller{c.Me})
-}
-
-func (c *Cluster) ReceiveWarning(src mc.Microcontroller, msgs ...string) {
-	//Deregister Microcontroller
-	log.Println("Deregistering Cluster: ", src.String())
+//ReceiveError -
+func (c *Cluster) ReceiveError(msg PeerErrorMessage) {
 	//log msgs to console
-	for msg := range msgs {
+	for msg := range msg.Messages {
 		log.Println(msg)
 	}
-}
-
-func (c *Cluster) ReceivePanic(msgs ...string) {
-	//Ensure that Panic reaches all Micros...
-	c.ClusterError(true, true, msgs...)
+	if msg.Panic {
+		panic(map[string]interface{}{
+			"Cluster": c,
+			"Message": msg,
+		})
+	}
+	// TODO do better with this check
+	if msg.DeregisterMe.Host != "" {
+		//Deregister Microcontroller
+		log.Println("Deregistering Cluster: ", msg.DeregisterMe.String())
+		for index, mc := range c.SlaveMicrocontrolers {
+			if mc.ID == msg.DeregisterMe.ID {
+				c.SlaveMicrocontrolers = RemoveMicrocontroller(c.SlaveMicrocontrolers, index)
+			}
+		}
+	}
 }

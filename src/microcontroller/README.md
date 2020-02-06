@@ -8,4 +8,4 @@
   ## Future Work
 
   - Device Health Check
-    - Command all Devices to perform their Health Check 
+    - Command all Components to perform their Health Check 

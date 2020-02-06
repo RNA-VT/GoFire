@@ -9,3 +9,9 @@
 ## GPIO 
 - Digital pin control object
 - rpi_pin.go contains the mapping of the various naming conventions for pins on a RasPi
+
+### Future Work
+- Digital Input
+- Analog Input/Output
+- Serial In/Out
+- 

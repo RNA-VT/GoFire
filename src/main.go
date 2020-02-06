@@ -36,11 +36,12 @@ func main() {
 		},
 		Echo: echo.New(),
 	}
-	routes.API = routes.APIService{
-		Cluster: &app.Cluster,
-	}
+	var API routes.APIService
+
+	API.Cluster = &app.Cluster
+
 	app.Cluster.Start()
-	routes.ConfigureRoutes(fullHostname, app.Echo)
+	routes.ConfigureRoutes(fullHostname, app.Echo, API)
 }
 
 func configureEnvironment() {
