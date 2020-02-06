@@ -22,8 +22,10 @@ type Cluster struct {
 	Name                 string
 	SlaveMicrocontrolers []mc.Microcontroller
 	Master               mc.Microcontroller
-	Me                   mc.Microcontroller
 }
+
+//Me - a reference to this micros instance in the slave list
+var Me *mc.Microcontroller
 
 func (c *Cluster) String() string {
 	cluster, err := utilities.StringJSON(c)
@@ -129,7 +131,7 @@ func (c *Cluster) KingMe() {
 		log.Println("Failed to Create New Microcontroller:", err.Error())
 	}
 	me.ID = c.generateUniqueID()
-	c.Me = me
+	Me = &me
 	c.Master = me
 	//The master also serves
 	c.SlaveMicrocontrolers = append(c.SlaveMicrocontrolers, me)
@@ -145,9 +147,9 @@ func (c *Cluster) AddMicrocontroller(newMC mc.Microcontroller) (response PeerUpd
 	response = PeerUpdateMessage{
 		Cluster: *c,
 	}
-	response.Source = c.Me
+	response.Source = *Me
 
-	exclusions := []mc.Microcontroller{newMC, c.Me}
+	exclusions := []mc.Microcontroller{newMC, *Me}
 	err = c.UpdatePeers("/", response, exclusions)
 	if err != nil {
 		log.Println("Unexpected Error during attempt to contact all peers: ", err)
@@ -168,7 +170,7 @@ func (c *Cluster) ALifeOfServitude() {
 		log.Println("Failed to Create New Microcontroller:", err.Error())
 	}
 	me.ID = c.generateUniqueID()
-	c.Me = me
+	Me = &me
 	masterHostname := viper.GetString("GOFIRE_MASTER_HOST") + ":" + viper.GetString("GOFIRE_MASTER_PORT")
 	//Try and Connect to the Master
 	err = test(masterHostname)
@@ -189,7 +191,7 @@ func (c *Cluster) JoinNetwork(URL string) error {
 	parsedURL, err := url.Parse("http://" + URL + "/join_network")
 	log.Println("Trying to Join: " + parsedURL.String())
 	msg := JoinNetworkMessage{
-		ImNewHere: c.Me,
+		ImNewHere: *Me,
 	}
 	body, err := json.Marshal(msg)
 	if err != nil {
@@ -199,7 +201,7 @@ func (c *Cluster) JoinNetwork(URL string) error {
 	resp, err := http.Post(parsedURL.String(), "application/json", bytes.NewBuffer(body))
 
 	if err != nil {
-		log.Println("[test] Couldn't connect to master.", c.Me.ID)
+		log.Println("[test] Couldn't connect to master.", Me.ID)
 		log.Println(err)
 		return err
 	}

@@ -40,11 +40,11 @@ type BaseMessage struct {
 //EverybodyHasToKnow - Meant for Errors that should stop the entire cluster
 func (c *Cluster) EverybodyHasToKnow(panicAfterWarning bool, panicCluster bool, MicrocontrollerToRemove mc.Microcontroller, notGoodThings ...string) {
 	var message PeerErrorMessage
-	message.Source = c.Me
+	message.Source = *Me
 	message.Messages = notGoodThings
 	message.Panic = panicCluster
 	message.DeregisterMe = MicrocontrollerToRemove
-	c.UpdatePeers("errors", message, []mc.Microcontroller{c.Me})
+	c.UpdatePeers("errors", message, []mc.Microcontroller{*Me})
 	if panicAfterWarning {
 		panic(notGoodThings)
 	}
