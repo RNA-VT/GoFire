@@ -1,12 +1,8 @@
 package cluster
 
 import (
-	"bytes"
-	"encoding/json"
 	mc "firecontroller/microcontroller"
-	"firecontroller/utilities"
 	"log"
-	"net/http"
 
 	"github.com/spf13/viper"
 )
@@ -27,33 +23,6 @@ func (c *Cluster) KingMe() {
 	//The master also serves
 	c.SlaveMicrocontrolers = append(c.SlaveMicrocontrolers, me)
 	//The Master waits ...
-}
-
-// UpdatePeers will take a byte slice and POST it to each microcontroller
-func (c *Cluster) UpdatePeers(urlPath string, message interface{}, exclude []mc.Microcontroller) error {
-	for i := 0; i < len(c.SlaveMicrocontrolers); i++ {
-		if !isExcluded(c.SlaveMicrocontrolers[i], exclude) {
-			body, err := utilities.JSON(message)
-			if err != nil {
-				log.Println("Failed to convert cluster to json: ", c)
-				return err
-			}
-			currURL := "http://" + c.SlaveMicrocontrolers[i].ToFullAddress() + urlPath
-
-			resp, err := http.Post(currURL, "application/json", bytes.NewBuffer(body))
-			if err != nil {
-				log.Println("WARNING: Failed to POST to Peer: ", c.SlaveMicrocontrolers[i].String(), currURL)
-				log.Println(err)
-			} else {
-				defer resp.Body.Close()
-				var result string
-				decoder := json.NewDecoder(resp.Body)
-				decoder.Decode(&result)
-				log.Println("Result:", result)
-			}
-		}
-	}
-	return nil
 }
 
 //AddMicrocontroller attempts to add a microcontroller to the cluster and returns the response data. This should only be run by the master.
