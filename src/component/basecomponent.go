@@ -21,9 +21,12 @@ func (b BaseComponent) String() string {
 
 //Component is an interface shared by the components we can control with a raspi
 type Component interface {
+	GetConfig()
+	Load()
 	Init() error
+	Enable(bool) error
+	Disable()
 	String() string
 	State() string
-	Enable(bool)
-	Disable()
+	Healthy() bool
 }
