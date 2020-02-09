@@ -75,23 +75,23 @@ func (s *Solenoid) Init() error {
 	if err != nil {
 		return err
 	}
-	//Create UUID now that GPIO is initilized
-	s.setID()
 	log.Println("Enabled and Initialized Solenoid:", s.String())
 
 	return nil
 }
 
 //Enable and optionally initializes the gpio pin
-func (s *Solenoid) Enable(init bool) error {
+func (s *Solenoid) Enable(init bool) (err error) {
 	if init {
-		err := s.GPIO.Init(s.HeaderPin, false)
+		err = s.GPIO.Init(s.HeaderPin, false)
 		if err != nil {
-			return err
+			return
 		}
 	}
 	s.Enabled = true
-	return nil
+	//Create UUID now that GPIO is enabled
+	s.setID()
+	return
 }
 
 //Disable this solenoid

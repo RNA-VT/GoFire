@@ -16,7 +16,7 @@ type Igniter struct {
 
 //IgniterConfig -
 type IgniterConfig struct {
-	Type          IgniterType
+	Type          IgniterType `yaml:"type"`
 	BaseComponent `yaml:",inline"`
 }
 
@@ -28,8 +28,6 @@ const (
 	GlowFly IgniterType = "glowfly"
 	//Induction -
 	Induction = "induction"
-	//Manual - an operator must manually activate this igniter
-	Manual = "manual"
 )
 
 //GetConfig - A transportable and marshalable version of this igniter
@@ -39,6 +37,7 @@ func (i Igniter) GetConfig() (config IgniterConfig) {
 	config.Name = i.Name
 	config.HeaderPin = i.HeaderPin
 	config.Metadata = i.Metadata
+	config.Type = i.Type
 	return
 }
 
@@ -49,9 +48,10 @@ func (i *Igniter) Load(config IgniterConfig) {
 	i.Name = config.Name
 	i.HeaderPin = config.HeaderPin
 	i.Metadata = config.Metadata
+	i.Type = config.Type
 }
 
-//Init - Enable, set initial value, log solenoid initial state
+//Init - Enable, set initial value, log igniter initial state
 func (i *Igniter) Init() error {
 	err := i.Enable(true)
 	if err != nil {
@@ -59,7 +59,7 @@ func (i *Igniter) Init() error {
 	}
 	//Create UUID now that GPIO is initilized
 	i.setID()
-	log.Println("Enabled and Initialized Solenoid:", i.String())
+	log.Println("Enabled and Initialized Igniter:", i.String())
 
 	return nil
 }
