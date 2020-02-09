@@ -65,7 +65,7 @@ func (i *Igniter) Init() error {
 }
 
 //Enable - enable this igniter and optionally initalize its gpio
-func (i *Igniter) Enable(init bool) error {
+func (i *Igniter) Enable(init bool) (err error) {
 	i.Enabled = true
 	if init {
 		err := i.GPIO.Init(i.HeaderPin, false)
