@@ -8,9 +8,11 @@
   - Modes:
     - Supply: Solenoid that controls a fuel tank, transport line or manifold inlet.
     - Outlet: exit from the pressurized system. Pilots, poofers and maybe some kind of venting. 
+
+## Igniters
+  - Types: Glowfly, Induction
   
 ### Future Work
-- Igniter
 - LED Driver
 - Motors 
 - Servos
@@ -22,3 +24,5 @@
   - Polling inputs from other micros
 - Component Health Checks
   - Match in memory state per component to read state after commanded changes
+- Multi-pin components
+- Assemblies - Grouped components that should be commanded as 1 (a full pilot system with solenoid, glowfly and some sensing for example)
