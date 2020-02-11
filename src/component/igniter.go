@@ -110,38 +110,38 @@ func (i *Igniter) setID() {
 	i.UID = i.HeaderPin
 }
 
-//Ignite - hawt
-func (i *Igniter) Ignite() {
+//On - hawt
+func (i *Igniter) On() {
 	if i.Healthy() {
 		i.GPIO.Pin.High()
 	}
 }
 
-//Arrest - hands up!
-func (i *Igniter) Arrest() {
+//Off - not hawt
+func (i *Igniter) Off() {
 	if i.Healthy() {
 		i.GPIO.Pin.Low()
 	}
 }
 
-//Spark - light this igniter for a set period of time
-func (i *Igniter) Spark(duration int) {
+//OnForDuration - light this igniter for a set period of time
+func (i *Igniter) OnForDuration(duration int) {
 	if i.Healthy() {
 		switch i.Type {
 		case Induction:
 			fallthrough
 		case GlowFly:
-			i.Ignite()
-			i.arrestAfter(duration)
+			i.On()
+			i.offAfter(duration)
 			break
 		}
 	} else {
 		log.Println("Cannot light unhealthy Igniter")
 	}
 }
-func (i *Igniter) arrestAfter(duration int) {
+func (i *Igniter) offAfter(duration int) {
 	if length, err := time.ParseDuration(strconv.Itoa(duration) + "ms"); err == nil {
-		time.AfterFunc(length, i.Arrest)
+		time.AfterFunc(length, i.Off)
 	} else {
 		//Log Failure to Close
 		log.Println(
@@ -149,6 +149,6 @@ func (i *Igniter) arrestAfter(duration int) {
 			"Invalid or malformed delay time.",
 			" ~~~~Arresting now~~~~",
 		)
-		i.Arrest()
+		i.Off()
 	}
 }

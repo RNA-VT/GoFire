@@ -49,8 +49,8 @@ func GetHeader() GoFireHeader {
 	}
 }
 
-//EverybodyHasToKnow - Meant for Errors that should stop the entire cluster
-func (c Cluster) EverybodyHasToKnow(panicAfterWarning bool, panicCluster bool, MicrocontrollerToRemove mc.Microcontroller, notGoodThings ...string) {
+//ClusterError - Meant for Errors that should stop the entire cluster or deregister this micro from the cluster
+func (c Cluster) ClusterError(panicAfterWarning bool, panicCluster bool, MicrocontrollerToRemove mc.Microcontroller, notGoodThings ...string) {
 	var message PeerErrorMessage
 	message.Messages = notGoodThings
 	message.Panic = panicCluster
