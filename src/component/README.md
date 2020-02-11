@@ -25,4 +25,3 @@
 - Component Health Checks
   - Match in memory state per component to read state after commanded changes
 - Multi-pin components
-- Assemblies - Grouped components that should be commanded as 1 (a full pilot system with solenoid, glowfly and some sensing for example)
