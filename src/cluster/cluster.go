@@ -17,6 +17,7 @@ type Cluster struct {
 	Name                  string
 	SlaveMicrocontrollers []mc.Microcontroller
 	Master                mc.Microcontroller
+	Me                    *mc.Microcontroller
 }
 
 //Config -
@@ -46,9 +47,6 @@ func (c *Cluster) Load(config Config) {
 		c.SlaveMicrocontrollers[i].Load(micro)
 	}
 }
-
-//Me - a reference to this micros instance in the slave list
-var Me *mc.Microcontroller
 
 func (c Cluster) String() string {
 	cluster, err := utilities.StringJSON(c)

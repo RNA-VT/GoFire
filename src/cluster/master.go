@@ -18,7 +18,7 @@ func (c *Cluster) KingMe() {
 		log.Println("Failed to Create New Microcontroller:", err.Error())
 	}
 	me.ID = c.generateUniqueID()
-	Me = &me
+	c.Me = &me
 	c.Master = me
 	//The master also serves
 	c.SlaveMicrocontrollers = append(c.SlaveMicrocontrollers, me)
@@ -36,10 +36,10 @@ func (c *Cluster) AddMicrocontroller(newMC mc.Config) (response PeerUpdateMessag
 
 	response = PeerUpdateMessage{
 		Cluster: c.GetConfig(),
-		Header:  GetHeader(),
+		Header:  c.GetHeader(),
 	}
 
-	exclusions := []mc.Microcontroller{newGuy, *Me}
+	exclusions := []mc.Microcontroller{newGuy, *c.Me}
 	err = c.UpdatePeers("/", response, exclusions)
 	if err != nil {
 		log.Println("Unexpected Error during attempt to contact all peers: ", err)

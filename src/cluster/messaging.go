@@ -42,9 +42,9 @@ type GoFireHeader struct {
 }
 
 //GetHeader -
-func GetHeader() GoFireHeader {
+func (c Cluster) GetHeader() GoFireHeader {
 	return GoFireHeader{
-		Source:  Me.GetConfig(),
+		Source:  c.Me.GetConfig(),
 		Created: time.Now(),
 	}
 }
@@ -55,8 +55,8 @@ func (c Cluster) ClusterError(panicAfterWarning bool, panicCluster bool, Microco
 	message.Messages = notGoodThings
 	message.Panic = panicCluster
 	message.DeregisterMe = MicrocontrollerToRemove
-	message.Header = GetHeader()
-	c.UpdatePeers("errors", message, []mc.Microcontroller{*Me})
+	message.Header = c.GetHeader()
+	c.UpdatePeers("errors", message, []mc.Microcontroller{*c.Me})
 	if panicAfterWarning {
 		panic(notGoodThings)
 	}

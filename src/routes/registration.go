@@ -54,5 +54,5 @@ func (a APIService) peerUpdate(c echo.Context) error {
 	a.Cluster.Load(clustahUpdate.Cluster)
 
 	log.Println("Peer Update Completed")
-	return c.JSON(http.StatusOK, "Peer Update Successfully Received by : "+(*cluster.Me).String())
+	return c.JSON(http.StatusOK, "Peer Update Successfully Received by : "+(*a.Cluster.Me).String())
 }

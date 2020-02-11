@@ -22,7 +22,7 @@ func (c Cluster) ALifeOfServitude() {
 		log.Println("Failed to Create New Microcontroller:", err.Error())
 	}
 	me.ID = c.generateUniqueID()
-	Me = &me
+	c.Me = &me
 	masterHostname := viper.GetString("GOFIRE_MASTER_HOST") + ":" + viper.GetString("GOFIRE_MASTER_PORT")
 	//Try and Connect to the Master
 	err = test(masterHostname)
@@ -44,8 +44,8 @@ func (c *Cluster) JoinNetwork(URL string) error {
 	log.Println("Trying to Join: " + parsedURL.String())
 
 	msg := JoinNetworkMessage{
-		ImNewHere: Me.GetConfig(),
-		Header:    GetHeader(),
+		ImNewHere: c.Me.GetConfig(),
+		Header:    c.GetHeader(),
 	}
 	body, err := json.Marshal(msg)
 	if err != nil {
@@ -55,7 +55,7 @@ func (c *Cluster) JoinNetwork(URL string) error {
 	resp, err := http.Post(parsedURL.String(), "application/json", bytes.NewBuffer(body))
 
 	if err != nil {
-		log.Println("[test] Couldn't connect to master.", Me.ID)
+		log.Println("[test] Couldn't connect to master.", c.Me.ID)
 		log.Println(err)
 		return err
 	}
