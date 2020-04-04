@@ -28,7 +28,8 @@ func (a APIService) joinNetwork(c echo.Context) error {
 
 	response, err := a.Cluster.AddMicrocontroller(msg.ImNewHere)
 	if err != nil {
-		log.Println("Error Joining Cluster")
+		log.Println("Error adding new Microcontroller to cluster", err.Error())
+		return c.JSON(http.StatusTeapot, err)
 	}
 
 	return c.JSON(http.StatusOK, response)
