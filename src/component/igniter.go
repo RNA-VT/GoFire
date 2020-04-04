@@ -110,6 +110,20 @@ func (i *Igniter) setID() {
 	i.UID = i.HeaderPin
 }
 
+//Command - process a command request for this solenoid
+func (i *Igniter) Command(cmd string) {
+	switch cmd {
+	case "on":
+		i.On()
+	case "off":
+		i.Off()
+	case "enable":
+		i.Enable(false)
+	case "disable":
+		i.Disable()
+	}
+}
+
 //On - hawt
 func (i *Igniter) On() {
 	if i.Healthy() {
