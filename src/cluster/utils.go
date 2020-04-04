@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-//generateUniqueID returns a unique id for asigning to a new microcontroller
+//generateUniqueID returns a unique id for assigning to a new microcontroller
 func (c Cluster) generateUniqueID() int {
 	limit := viper.GetInt("MICROCONTORLLER_LIMIT")
 	randID := rand.Intn(limit)
