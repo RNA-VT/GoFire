@@ -3,6 +3,7 @@ package cluster
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	mc "firecontroller/microcontroller"
 	"log"
 	"net/http"
@@ -53,11 +54,12 @@ func (c *Cluster) JoinNetwork(URL string) error {
 		return err
 	}
 	resp, err := http.Post(parsedURL.String(), "application/json", bytes.NewBuffer(body))
-
 	if err != nil {
-		log.Println("[test] Couldn't connect to master.", c.Me.ID)
+		log.Println("Something went wrong connecting to the Master", c.Me)
 		log.Println(err)
 		return err
+	} else if resp.StatusCode >= 400 {
+		return errors.New("Registration request was rejected by the Master")
 	}
 	log.Println("Connected to master. Sending message to peers.")
 

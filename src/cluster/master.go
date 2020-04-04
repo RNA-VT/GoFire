@@ -32,10 +32,10 @@ func (c *Cluster) AddMicrocontroller(newMC mc.Config) (response PeerUpdateMessag
 	newGuy.Load(newMC)
 	newGuy.ID = c.generateUniqueID()
 
-	for micro, index := range c.SlaveMicrocontrollers {
+	for _, micro := range c.SlaveMicrocontrollers {
 		if micro.Host == newGuy.Host {
 			//This guy ain't so new!
-			return PeerUpdateMessage{}, errors.New("Failed to Register. This Host Has Already Been Registered to this Cluster")
+			return PeerUpdateMessage{}, errors.New("Requesting instance is running on a microcontroller already registered to this cluster")
 		}
 	}
 	c.SlaveMicrocontrollers = append(c.SlaveMicrocontrollers, newGuy)
