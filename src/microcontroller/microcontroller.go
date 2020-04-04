@@ -45,6 +45,10 @@ func (m Microcontroller) GetConfig() (config Config) {
 	for i, sol := range m.Solenoids {
 		config.Solenoids[i] = sol.GetConfig()
 	}
+	config.Igniters = make([]component.IgniterConfig, len(m.Igniters))
+	for i, igniter := range m.Igniters {
+		config.Igniters[i] = igniter.GetConfig()
+	}
 	return
 }
 
