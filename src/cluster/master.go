@@ -32,15 +32,16 @@ func (c *Cluster) AddMicrocontroller(newMC mc.Config) (response PeerUpdateMessag
 	newGuy.Load(newMC)
 	newGuy.ID = c.generateUniqueID()
 
-	for _, micro := range c.SlaveMicrocontrollers {
-		if micro.Host == newGuy.Host {
-			//This guy ain't so new!
-			return PeerUpdateMessage{}, errors.New("Requesting instance is running on a microcontroller already registered to this cluster")
+	if viper.GetString("ENV") == "production" {
+		for _, micro := range c.SlaveMicrocontrollers {
+			if micro.Host == newGuy.Host {
+				//This guy ain't so new!
+				return PeerUpdateMessage{}, errors.New("Requesting instance is running on a microcontroller already registered to this cluster")
+			}
 		}
 	}
 	c.SlaveMicrocontrollers = append(c.SlaveMicrocontrollers, newGuy)
 	PrintClusterInfo(*c)
-
 	response = PeerUpdateMessage{
 		Cluster: c.GetConfig(),
 		Header:  c.GetHeader(),
