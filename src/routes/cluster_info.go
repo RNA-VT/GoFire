@@ -58,7 +58,7 @@ func (a APIService) getComponent(c echo.Context) error {
 }
 
 func (a APIService) getComponentConfig(c echo.Context) error {
-	yamlFile, err := ioutil.ReadFile("./app/config/solenoids.yaml")
+	yamlFile, err := ioutil.ReadFile("./app/config/microcontroller.yaml")
 	if err != nil {
 		log.Printf("yamlFile.Get err   #%v ", err)
 		return err
