@@ -1,13 +1,10 @@
 package cluster
 
 import (
-	"errors"
-	"firecontroller/component"
 	"firecontroller/microcontroller"
 	mc "firecontroller/microcontroller"
 	"firecontroller/utilities"
 	"log"
-	"strconv"
 
 	"github.com/spf13/viper"
 )
@@ -76,34 +73,4 @@ func (c Cluster) GetMicrocontrollers() map[int]microcontroller.Microcontroller {
 		micros[c.SlaveMicrocontrollers[i].ID] = c.SlaveMicrocontrollers[i]
 	}
 	return micros
-}
-
-//GetComponent - gets a component by its id
-func (c *Cluster) GetComponent(id string) (sol component.Solenoid, err error) {
-	components := c.GetComponents()
-	sol, ok := components[id]
-	if !ok {
-		return sol, errors.New("Component Not Found")
-	}
-	return sol, nil
-}
-
-//GetComponents builds a map of all the components in the cluster by a cluster wide unique key
-func (c Cluster) GetComponents() map[string]component.Solenoid {
-	components := make(map[string]component.Solenoid, c.countComponents())
-	for i := 0; i < len(c.SlaveMicrocontrollers); i++ {
-		for j := 0; j < len(c.SlaveMicrocontrollers[i].Solenoids); j++ {
-			key := strconv.Itoa(c.SlaveMicrocontrollers[i].Solenoids[j].UID)
-			components[key] = c.SlaveMicrocontrollers[i].Solenoids[j]
-		}
-	}
-	return components
-}
-func (c Cluster) countComponents() int {
-	count := 0
-	for i := 0; i < len(c.SlaveMicrocontrollers); i++ {
-		count += len(c.SlaveMicrocontrollers[i].Solenoids)
-	}
-
-	return count
 }
