@@ -41,7 +41,7 @@ func (a APIService) getMicrocontroller(c echo.Context) error {
 }
 
 func (a APIService) getComponents(c echo.Context) error {
-	return c.JSON(http.StatusOK, a.Cluster.GetComponents())
+	return c.JSON(http.StatusOK, a.Cluster.Me.GetComponentMap())
 }
 
 func (a APIService) getComponent(c echo.Context) error {
