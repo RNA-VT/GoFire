@@ -35,6 +35,11 @@ type PeerUpdateMessage struct {
 	Header  GoFireHeader
 }
 
+//Command -
+type CommandMessage struct {
+	Command string
+}
+
 //GoFireHeader -
 type GoFireHeader struct {
 	Source  mc.Config
