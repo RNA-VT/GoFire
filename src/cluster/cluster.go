@@ -13,7 +13,7 @@ import (
 type Cluster struct {
 	Name                  string
 	SlaveMicrocontrollers []mc.Microcontroller
-	Master                *mc.Microcontroller
+	Master                mc.Microcontroller
 	Me                    *mc.Microcontroller
 }
 
@@ -32,6 +32,7 @@ func (c Cluster) GetConfig() (config Config) {
 	for i, micro := range c.SlaveMicrocontrollers {
 		config.SlaveMicrocontrollers[i] = micro.GetConfig()
 	}
+
 	return
 }
 
