@@ -21,8 +21,9 @@ func (c *Cluster) KingMe() {
 	me.ID = c.generateUniqueID()
 	//The master also serves
 	c.SlaveMicrocontrollers = append(c.SlaveMicrocontrollers, me)
-	c.Me = &c.SlaveMicrocontrollers[len(c.SlaveMicrocontrollers)-1]
-	c.Master = c.Me
+	c.Master = c.SlaveMicrocontrollers[len(c.SlaveMicrocontrollers)-1]
+	c.Me = &c.Master
+
 	//The Master waits ...
 }
 
@@ -31,7 +32,6 @@ func (c *Cluster) AddMicrocontroller(newMC mc.Config) (response PeerUpdateMessag
 	var newGuy mc.Microcontroller
 	newGuy.Load(newMC)
 	newGuy.ID = c.generateUniqueID()
-
 	if viper.GetString("ENV") == "production" {
 		for _, micro := range c.SlaveMicrocontrollers {
 			if micro.Host == newGuy.Host {
@@ -40,7 +40,11 @@ func (c *Cluster) AddMicrocontroller(newMC mc.Config) (response PeerUpdateMessag
 			}
 		}
 	}
+
 	c.SlaveMicrocontrollers = append(c.SlaveMicrocontrollers, newGuy)
+	//FUCK: OK It's definitely wrong here, the newGuy is all 0s
+
+	log.Println("DEFINITELY BROKEN HERE", newGuy, c.GetConfig())
 	PrintClusterInfo(*c)
 	response = PeerUpdateMessage{
 		Cluster: c.GetConfig(),
