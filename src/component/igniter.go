@@ -17,6 +17,7 @@ type Igniter struct {
 //IgniterConfig -
 type IgniterConfig struct {
 	Type          IgniterType `yaml:"type"`
+	PinMap        io.RpiPinMap
 	BaseComponent `yaml:",inline"`
 }
 
@@ -32,12 +33,14 @@ const (
 
 //GetConfig - A transportable and marshalable version of this igniter
 func (i Igniter) GetConfig() (config IgniterConfig) {
+
 	config.UID = i.UID
 	config.Enabled = i.Enabled
 	config.Name = i.Name
 	config.HeaderPin = i.HeaderPin
 	config.Metadata = i.Metadata
 	config.Type = i.Type
+	config.PinMap = i.GPIO.PinInfo
 	return
 }
 
