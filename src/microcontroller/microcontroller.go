@@ -66,7 +66,6 @@ func (m *Microcontroller) Load(config Config) {
 	}
 	if length := len(config.Solenoids); length > 0 {
 		m.Solenoids = make([]component.Solenoid, length)
-		log.Println(m.Solenoids)
 		for i, sol := range config.Solenoids {
 			m.Solenoids[i].Load(sol)
 		}
