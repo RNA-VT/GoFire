@@ -19,6 +19,7 @@ type Microcontroller struct {
 	Description string
 	Host        string
 	Port        string
+	Master      bool
 	Solenoids   []component.Solenoid
 	Igniters    []component.Igniter
 }
@@ -30,6 +31,7 @@ type Config struct {
 	Description string                     `yaml:"description"`
 	Host        string                     `yaml:"host"`
 	Port        string                     `yaml:"port"`
+	Master      bool                       `yaml:"master"`
 	Solenoids   []component.SolenoidConfig `yaml:"solenoids"`
 	Igniters    []component.IgniterConfig  `yaml:"igniters"`
 }
@@ -41,6 +43,7 @@ func (m Microcontroller) GetConfig() (config Config) {
 	config.Port = m.Port
 	config.Name = m.Name
 	config.Description = m.Description
+	config.Master = m.Master
 	config.Solenoids = make([]component.SolenoidConfig, len(m.Solenoids))
 	for i, sol := range m.Solenoids {
 		config.Solenoids[i] = sol.GetConfig()
@@ -57,6 +60,7 @@ func (m *Microcontroller) Load(config Config) {
 	m.ID = config.ID
 	m.Name = config.Name
 	m.Description = config.Description
+	m.Master = config.Master
 	if viper.GetBool("GOFIRE_MASTER") {
 		m.Host = viper.GetString("GOFIRE_MASTER_HOST")
 		m.Port = viper.GetString("GOFIRE_MASTER_PORT")
