@@ -40,7 +40,7 @@ func main() {
 
 	API.Cluster = &app.Cluster
 
-	app.Cluster.Start()
+	API.Cluster.Start()
 	routes.ConfigureRoutes(fullHostname, app.Echo, API)
 }
 
