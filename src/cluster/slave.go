@@ -23,6 +23,7 @@ func (c Cluster) ALifeOfServitude() {
 		log.Println("Failed to Create New Microcontroller:", err.Error())
 	}
 	me.ID = c.generateUniqueID()
+	me.Master = false
 	c.Me = &me
 	masterHostname := viper.GetString("GOFIRE_MASTER_HOST") + ":" + viper.GetString("GOFIRE_MASTER_PORT")
 	//Try and Connect to the Master
