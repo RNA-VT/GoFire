@@ -10,7 +10,7 @@ import (
 	"github.com/labstack/echo"
 )
 
-func (a APIService) addManageRoutes(e *echo.Echo) {
+func (a *APIService) addManageRoutes(e *echo.Echo) {
 	api := e.Group("/v1")
 	api.POST("/:id", a.editMicrocontroller)
 	api.POST("/component/:id", a.editComponent)
@@ -54,7 +54,7 @@ func (a APIService) editComponent(c echo.Context) error {
 	return c.JSON(http.StatusOK, c.Param("id"))
 }
 
-func (a APIService) editMicrocontroller(c echo.Context) error {
+func (a *APIService) editMicrocontroller(c echo.Context) error {
 	log.Println("start editing microcontroller")
 
 	body := c.Request().Body

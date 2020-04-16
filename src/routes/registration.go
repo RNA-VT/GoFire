@@ -9,13 +9,13 @@ import (
 	"github.com/labstack/echo"
 )
 
-func (a APIService) addRegistrationRoutes(e *echo.Echo) {
+func (a *APIService) addRegistrationRoutes(e *echo.Echo) {
 	api := e.Group("/v1")
 	api.POST("/", a.peerUpdate)
 	api.POST("/join_network", a.joinNetwork)
 }
 
-func (a APIService) joinNetwork(c echo.Context) error {
+func (a *APIService) joinNetwork(c echo.Context) error {
 	log.Println("[master] Microcontroller asked to join cluster")
 
 	body := c.Request().Body
@@ -37,7 +37,7 @@ func (a APIService) joinNetwork(c echo.Context) error {
 }
 
 //PeerUpdate receives new cluster info from the most recently registered peer
-func (a APIService) peerUpdate(c echo.Context) error {
+func (a *APIService) peerUpdate(c echo.Context) error {
 	log.Println("Receiving Update from New Peer")
 	body := c.Request().Body
 
