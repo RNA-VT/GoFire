@@ -35,7 +35,7 @@ type PeerUpdateMessage struct {
 	Header  GoFireHeader
 }
 
-//Command -
+//CommandMessage -
 type CommandMessage struct {
 	Command string
 }
@@ -87,7 +87,7 @@ func (c Cluster) UpdatePeers(urlPath string, message interface{}, exclude []mc.M
 				var result string
 				decoder := json.NewDecoder(resp.Body)
 				decoder.Decode(&result)
-				log.Println("Result:", result)
+				log.Println("Peer Update Response:", result)
 			}
 		}
 	}
