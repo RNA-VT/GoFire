@@ -17,7 +17,7 @@ import (
 //******************************************************************************************************
 
 //ALifeOfServitude is all that awaits this microcontroller
-func (c Cluster) ALifeOfServitude() {
+func (c *Cluster) ALifeOfServitude() {
 	me, err := mc.NewMicrocontroller(viper.GetString("GOFIRE_HOST"), viper.GetString("GOFIRE_PORT"))
 	if err != nil {
 		log.Println("Failed to Create New Microcontroller:", err.Error())
