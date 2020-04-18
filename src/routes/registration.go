@@ -3,6 +3,7 @@ package routes
 import (
 	"encoding/json"
 	"firecontroller/cluster"
+	mc "firecontroller/microcontroller"
 	"log"
 	"net/http"
 
@@ -26,14 +27,15 @@ func (a *APIService) joinNetwork(c echo.Context) error {
 		log.Println("Error decoding Request Body", err)
 	}
 
-	response, err := a.Cluster.AddMicrocontroller(msg.ImNewHere)
+	a.Cluster.AddMicrocontroller(msg.ImNewHere)
+	err = a.Cluster.SendClusterUpdate([]mc.Config{})
 	if err != nil {
 		log.Println("Error adding new instance to cluster")
 		log.Println(err.Error())
 		return c.JSON(http.StatusForbidden, err)
 	}
 
-	return c.JSON(http.StatusOK, response)
+	return c.JSON(http.StatusOK, "Join Success")
 }
 
 //PeerUpdate receives new cluster info from the most recently registered peer
@@ -41,7 +43,7 @@ func (a *APIService) peerUpdate(c echo.Context) error {
 	log.Println("Receiving Update from New Peer")
 	body := c.Request().Body
 
-	var clustahUpdate cluster.PeerUpdateMessage
+	var clustahUpdate cluster.MembershipChange
 	err := json.NewDecoder(body).Decode(&clustahUpdate)
 	if err != nil {
 		log.Println("Failed to decode Cluster info from new peer")
@@ -56,5 +58,5 @@ func (a *APIService) peerUpdate(c echo.Context) error {
 	a.Cluster.Load(clustahUpdate.Cluster)
 
 	log.Println("Peer Update Completed")
-	return c.JSON(http.StatusOK, "Peer Update Successfully Received by : "+(*a.Cluster.Me).String())
+	return c.JSON(http.StatusOK, "Peer Update Successfully Received by : "+a.Cluster.Me.Name+" @ "+a.Cluster.Me.ToFullAddress())
 }
