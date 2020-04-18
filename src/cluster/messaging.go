@@ -29,8 +29,8 @@ type JoinNetworkMessage struct {
 	Header    GoFireHeader
 }
 
-//PeerUpdateMessage contains a source and cluster info
-type PeerUpdateMessage struct {
+//MembershipChange contains a source and cluster info
+type MembershipChange struct {
 	Cluster Config
 	Header  GoFireHeader
 }
@@ -61,14 +61,14 @@ func (c Cluster) ClusterError(panicAfterWarning bool, panicCluster bool, Microco
 	message.Panic = panicCluster
 	message.DeregisterMe = MicrocontrollerToRemove
 	message.Header = c.GetHeader()
-	c.UpdatePeers("errors", message, []mc.Microcontroller{*c.Me})
+	c.UpdatePeers("errors", message, []mc.Config{c.Me.GetConfig()})
 	if panicAfterWarning {
 		panic(notGoodThings)
 	}
 }
 
 // UpdatePeers will take a byte slice and POST it to each microcontroller
-func (c Cluster) UpdatePeers(urlPath string, message interface{}, exclude []mc.Microcontroller) error {
+func (c Cluster) UpdatePeers(urlPath string, message interface{}, exclude []mc.Config) error {
 	for i := 0; i < len(c.Microcontrollers); i++ {
 		if !isExcluded(c.Microcontrollers[i], exclude) {
 			body, err := utilities.JSON(message)
@@ -111,5 +111,6 @@ func (c *Cluster) ReceiveError(msg PeerErrorMessage) {
 		//Deregister Microcontroller
 		log.Println("Deregistering Microcontroller From Cluster: ", msg.DeregisterMe.String())
 		c.RemoveMicrocontroller(msg.DeregisterMe)
+		c.SendClusterUpdate([]mc.Config{})
 	}
 }

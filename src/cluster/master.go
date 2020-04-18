@@ -42,6 +42,7 @@ func (c *Cluster) KingMe() {
 							log.Println(m.Name + " @" + m.ToFullAddress() + " is NOT ok")
 							log.Println("Deregistering Microcontroller...")
 							c.RemoveMicrocontroller(m)
+							c.SendClusterUpdate([]mc.Config{})
 						} else {
 							log.Println(m.Name + " @" + m.ToFullAddress() + " is ok")
 						}
@@ -53,7 +54,7 @@ func (c *Cluster) KingMe() {
 }
 
 //AddMicrocontroller attempts to add a microcontroller to the cluster and returns the response data. This should only be run by the master.
-func (c *Cluster) AddMicrocontroller(newMC mc.Config) (response PeerUpdateMessage, err error) {
+func (c *Cluster) AddMicrocontroller(newMC mc.Config) error {
 	var newGuy mc.Microcontroller
 	newGuy.Load(newMC)
 	newGuy.ID = c.generateUniqueID()
@@ -61,7 +62,7 @@ func (c *Cluster) AddMicrocontroller(newMC mc.Config) (response PeerUpdateMessag
 		for _, micro := range c.Microcontrollers {
 			if micro.Host == newGuy.Host {
 				//This guy ain't so new!
-				return PeerUpdateMessage{}, errors.New("Requesting instance is running on a microcontroller already registered to this cluster")
+				return errors.New("Requesting instance is running on a microcontroller already registered to this cluster")
 			}
 		}
 	}
@@ -69,23 +70,11 @@ func (c *Cluster) AddMicrocontroller(newMC mc.Config) (response PeerUpdateMessag
 	c.Microcontrollers = append(c.Microcontrollers, newGuy)
 
 	PrintClusterInfo(*c)
-	response = PeerUpdateMessage{
-		Cluster: c.GetConfig(),
-		Header:  c.GetHeader(),
-	}
-
-	exclusions := []mc.Microcontroller{newGuy, *c.Me}
-	err = c.UpdatePeers("", response, exclusions)
-	if err != nil {
-		log.Println("Unexpected Error during attempt to contact all peers: ", err)
-		return PeerUpdateMessage{}, err
-	}
-
-	return
+	return nil
 }
 
 //RemoveMicrocontroller -
-func (c *Cluster) RemoveMicrocontroller(ImDoneHere mc.Microcontroller) (response PeerUpdateMessage, err error) {
+func (c *Cluster) RemoveMicrocontroller(ImDoneHere mc.Microcontroller) {
 	for index, mc := range c.Microcontrollers {
 		if mc.ID == ImDoneHere.ID {
 			s := c.Microcontrollers
@@ -95,16 +84,21 @@ func (c *Cluster) RemoveMicrocontroller(ImDoneHere mc.Microcontroller) (response
 			return
 		}
 	}
-	response = PeerUpdateMessage{
+}
+
+//SendClusterUpdate -
+func (c Cluster) SendClusterUpdate(exclude []mc.Config) error {
+	msg := MembershipChange{
 		Cluster: c.GetConfig(),
 		Header:  c.GetHeader(),
 	}
 
-	exclusions := []mc.Microcontroller{*c.Me}
-	err = c.UpdatePeers("", response, exclusions)
+	exclusions := append(exclude, c.Me.GetConfig())
+
+	err := c.UpdatePeers("", msg, exclusions)
 	if err != nil {
 		log.Println("Unexpected Error during attempt to contact all peers: ", err)
-		return PeerUpdateMessage{}, err
+		return err
 	}
-	return
+	return nil
 }
