@@ -67,7 +67,7 @@ func (c *Cluster) JoinNetwork(URL string) error {
 	defer resp.Body.Close()
 
 	decoder := json.NewDecoder(resp.Body)
-	var t string
+	var t PeerUpdateMessage
 	err = decoder.Decode(&t)
 	if err != nil {
 		log.Println("Failed to decode response from Master Microcontroller")
@@ -75,7 +75,7 @@ func (c *Cluster) JoinNetwork(URL string) error {
 		return err
 	}
 	//Update self with data from the master
-	//c.Load(t.Cluster)
+	c.Load(t.Cluster)
 
 	return nil
 }

@@ -30,7 +30,7 @@ type JoinNetworkMessage struct {
 }
 
 //MembershipChange contains a source and cluster info
-type MembershipChange struct {
+type PeerUpdateMessage struct {
 	Cluster Config
 	Header  GoFireHeader
 }
@@ -61,7 +61,7 @@ func (c Cluster) ClusterError(panicAfterWarning bool, panicCluster bool, Microco
 	message.Panic = panicCluster
 	message.DeregisterMe = MicrocontrollerToRemove
 	message.Header = c.GetHeader()
-	c.UpdatePeers("errors", message, []mc.Config{c.Me.GetConfig()})
+	c.UpdatePeers("/errors", message, []mc.Config{c.Me.GetConfig()})
 	if panicAfterWarning {
 		panic(notGoodThings)
 	}
@@ -76,7 +76,7 @@ func (c Cluster) UpdatePeers(urlPath string, message interface{}, exclude []mc.C
 				log.Println("Failed to convert cluster to json: ", c)
 				return err
 			}
-			currURL := "http://" + c.Microcontrollers[i].ToFullAddress() + "/v1/" + urlPath
+			currURL := "http://" + c.Microcontrollers[i].ToFullAddress() + "/v1" + urlPath
 
 			resp, err := http.Post(currURL, "application/json", bytes.NewBuffer(body))
 			if err != nil {
