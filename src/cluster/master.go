@@ -57,7 +57,6 @@ func (c *Cluster) KingMe() {
 func (c *Cluster) AddMicrocontroller(newMC mc.Config) error {
 	var newGuy mc.Microcontroller
 	newGuy.Load(newMC)
-	newGuy.ID = c.generateUniqueID()
 	if viper.GetString("ENV") == "production" {
 		for _, micro := range c.Microcontrollers {
 			if micro.Host == newGuy.Host {
@@ -88,14 +87,14 @@ func (c *Cluster) RemoveMicrocontroller(ImDoneHere mc.Microcontroller) {
 
 //SendClusterUpdate -
 func (c Cluster) SendClusterUpdate(exclude []mc.Config) error {
-	msg := MembershipChange{
+	msg := PeerUpdateMessage{
 		Cluster: c.GetConfig(),
 		Header:  c.GetHeader(),
 	}
 
 	exclusions := append(exclude, c.Me.GetConfig())
 
-	err := c.UpdatePeers("", msg, exclusions)
+	err := c.UpdatePeers("/peers", msg, exclusions)
 	if err != nil {
 		log.Println("Unexpected Error during attempt to contact all peers: ", err)
 		return err
