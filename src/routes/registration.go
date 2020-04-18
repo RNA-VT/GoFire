@@ -12,7 +12,7 @@ import (
 
 func (a *APIService) addRegistrationRoutes(e *echo.Echo) {
 	api := e.Group("/v1")
-	api.POST("/", a.peerUpdate)
+	api.POST("/peers", a.peerUpdate)
 	api.POST("/join_network", a.joinNetwork)
 }
 
@@ -28,14 +28,14 @@ func (a *APIService) joinNetwork(c echo.Context) error {
 	}
 
 	a.Cluster.AddMicrocontroller(msg.ImNewHere)
-	err = a.Cluster.SendClusterUpdate([]mc.Config{})
-	if err != nil {
-		log.Println("Error adding new instance to cluster")
-		log.Println(err.Error())
-		return c.JSON(http.StatusForbidden, err)
+	a.Cluster.SendClusterUpdate([]mc.Config{
+		msg.ImNewHere,
+	})
+	clusterUpdate := cluster.PeerUpdateMessage{
+		Header:  a.Cluster.GetHeader(),
+		Cluster: a.Cluster.GetConfig(),
 	}
-
-	return c.JSON(http.StatusOK, "Join Success")
+	return c.JSON(http.StatusOK, clusterUpdate)
 }
 
 //PeerUpdate receives new cluster info from the most recently registered peer
@@ -43,7 +43,7 @@ func (a *APIService) peerUpdate(c echo.Context) error {
 	log.Println("Receiving Update from New Peer")
 	body := c.Request().Body
 
-	var clustahUpdate cluster.MembershipChange
+	var clustahUpdate cluster.PeerUpdateMessage
 	err := json.NewDecoder(body).Decode(&clustahUpdate)
 	if err != nil {
 		log.Println("Failed to decode Cluster info from new peer")
