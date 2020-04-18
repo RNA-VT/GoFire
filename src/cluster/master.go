@@ -36,7 +36,7 @@ func (c *Cluster) KingMe() {
 				for _, m := range c.Microcontrollers {
 					if !m.Master {
 						log.Println("Checking Peer:", m.Name, m.ToFullAddress())
-						url := "http://" + m.ToFullAddress() + "/v1/heartbeat"
+						url := "http://" + m.ToFullAddress() + "/v1/health"
 						resp, err := http.Get(url)
 						if err != nil || resp.StatusCode != 200 {
 							log.Println(m.Name + " @" + m.ToFullAddress() + " is NOT ok")
