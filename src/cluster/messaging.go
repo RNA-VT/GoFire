@@ -68,6 +68,7 @@ func (c Cluster) ClusterError(panicAfterWarning bool, panicCluster bool, Microco
 }
 
 // UpdatePeers will take a byte slice and POST it to each microcontroller
+
 func (c Cluster) UpdatePeers(urlPath string, message interface{}, exclude []mc.Config) error {
 	for i := 0; i < len(c.Microcontrollers); i++ {
 		if !isExcluded(c.Microcontrollers[i], exclude) {
