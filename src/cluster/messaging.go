@@ -29,7 +29,7 @@ type JoinNetworkMessage struct {
 	Header    GoFireHeader
 }
 
-//MembershipChange contains a source and cluster info
+//PeerUpdateMessage contains a source and cluster info
 type PeerUpdateMessage struct {
 	Cluster Config
 	Header  GoFireHeader
