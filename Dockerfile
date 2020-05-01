@@ -1,19 +1,62 @@
+# ------- backend build ------- #
 FROM golang:1.13.5 AS gofirebuilder
 
-RUN mkdir -p /go/src/GoFire/
+# Set necessary environmet variables needed for our image
+ENV GO111MODULE=on \
+    CGO_ENABLED=0 \
+    GOOS=linux
 
-ADD /src /go/src/GoFire/
+WORKDIR /app/GoFire
 
-WORKDIR /go/src/GoFire/
+COPY src/go.mod .
+COPY src/go.sum .
 
-RUN go build
+RUN go mod download
 
-FROM alpine:latest
+COPY ./src .
+
+RUN go build -o ./gofire .
+
+RUN ls -al
+
+
+# ------- frontend build ------- #
+FROM node:13.12.0-alpine AS frontendbuilder
+
+# set working directory
+WORKDIR /app
+
+# add `/app/node_modules/.bin` to $PATH
+ENV PATH /app/node_modules/.bin:$PATH
+
+# install app dependencies
+COPY frontend/package.json ./
+COPY frontend/package-lock.json ./
+RUN npm install --silent
+RUN npm install react-scripts@3.4.1 -g --silent
+
+# add app
+COPY ./frontend ./
+
+RUN npm run build
+
+
+# ------- executable build ------- #
+FROM alpine:3.9
+RUN apk add ca-certificates
 
 RUN export GOFIRE_MASTER_HOST=`/sbin/ip route|awk '/default/ { print $3 }'` && export GOFIRE_MASTER=true
 
-COPY --from=gofirebuilder /go/src/GoFire/firecontroller .
+RUN mkdir -p /frontend/build
 
-RUN chmod +x firecontroller
+COPY --from=frontendbuilder /app/build/* /frontend/build/
 
-CMD ["firecontroller"]
+COPY --from=gofirebuilder /app/GoFire/gofire /app/
+
+RUN chmod +x /app/gofire
+
+RUN ls -la app/
+
+RUN ls -la /app/
+
+CMD ["/app/gofire"]

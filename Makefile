@@ -14,8 +14,16 @@ help:
 install:
 	./environment/build-scripts/install-dependencies.sh
 
-run-docker:
-	cd environment && docker-compose up
+build-local:
+	docker build -t gofire .
+
+run-local-docker:
+	docker run \
+		--rm \
+		-p 8000:8000 \
+		-e GOFIRE_MASTER=true \
+		gofire:latest
+	
 
 run-master:
 	cd src && GOFIRE_MASTER=true go run main.go
