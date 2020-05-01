@@ -17,9 +17,6 @@ COPY ./src .
 
 RUN go build -o ./gofire .
 
-RUN ls -al
-
-
 # ------- frontend build ------- #
 FROM node:13.12.0-alpine AS frontendbuilder
 
@@ -40,7 +37,6 @@ COPY ./frontend ./
 
 RUN npm run build
 
-
 # ------- executable build ------- #
 FROM alpine:3.9
 RUN apk add ca-certificates
@@ -52,11 +48,9 @@ RUN mkdir -p /frontend/build
 COPY --from=frontendbuilder /app/build/* /frontend/build/
 
 COPY --from=gofirebuilder /app/GoFire/gofire /app/
+COPY --from=gofirebuilder /app/GoFire/config.yaml /
+COPY --from=gofirebuilder /app/GoFire/app/config/ /app/config/
 
 RUN chmod +x /app/gofire
-
-RUN ls -la app/
-
-RUN ls -la /app/
 
 CMD ["/app/gofire"]
