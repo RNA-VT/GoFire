@@ -33,9 +33,15 @@ RUN npm install --silent
 RUN npm install react-scripts@3.4.1 -g --silent
 
 # add app
-COPY ./frontend ./
+COPY ./frontend .
+
+RUN ls -al
 
 RUN npm run build
+
+RUN ls -al
+
+RUN ls -al build
 
 # ------- executable build ------- #
 FROM alpine:3.9
@@ -45,11 +51,13 @@ RUN export GOFIRE_MASTER_HOST=`/sbin/ip route|awk '/default/ { print $3 }'` && e
 
 RUN mkdir -p /frontend/build
 
-COPY --from=frontendbuilder /app/build/* /frontend/build/
+COPY --from=frontendbuilder /app/build /frontend/build/
 
 COPY --from=gofirebuilder /app/GoFire/gofire /app/
 COPY --from=gofirebuilder /app/GoFire/config.yaml /
 COPY --from=gofirebuilder /app/GoFire/app/config/ /app/config/
+
+RUN ls -al /frontend/build
 
 RUN chmod +x /app/gofire
 

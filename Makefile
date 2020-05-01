@@ -19,9 +19,11 @@ build-local:
 
 run-local-docker:
 	docker run \
+		-i -t \
 		--rm \
 		-p 8000:8000 \
 		-e GOFIRE_MASTER=true \
+		-e GOFIRE_MASTER_HOST= \
 		gofire:latest
 	
 
