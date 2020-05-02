@@ -41,4 +41,7 @@ run-js:
 
 build-js:
 	cd frontend && npm run build
+
+build-all-images:
+	docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t dtp263/gofire:v1.2 --push .
   

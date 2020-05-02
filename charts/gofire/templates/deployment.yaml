@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "gofire.fullname" . }}
+  labels:
+    {{- include "gofire.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "gofire.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "gofire.selectorLabels" . | nindent 8 }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "gofire.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: GOFIRE_MASTER
+              value: {{ .Values.gofire.isMaster | quote }}
+            {{- if .Values.gofire.masterHost }}
+              - name: GOFIRE_MASTER_HOST
+                value: {{ .Values.gofire.masterHost | quote }}
+            {{- end }}
+            {{- if .Values.gofire.host }}
+              - name: GOFIRE_HOST
+                value: {{ .Values.gofire.host | quote }}
+            {{- end }}
+            - name: GOFIRE_PORT
+              value: {{ .Values.gofire.port | quote }}
+            - name: GOFIRE_MOCK_GPIO
+              value: {{ .Values.gofire.mockGpio | quote }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.port.gofireService }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
