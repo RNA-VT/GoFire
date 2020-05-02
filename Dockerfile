@@ -1,5 +1,5 @@
 # ------- backend build ------- #
-FROM golang:1.13.5 AS gofirebuilder
+FROM golang:1.14.2-alpine3.11 AS gofirebuilder
 
 # Set necessary environmet variables needed for our image
 ENV GO111MODULE=on \
@@ -18,7 +18,7 @@ COPY ./src .
 RUN go build -o ./gofire .
 
 # ------- frontend build ------- #
-FROM node:alpine3.10 AS frontendbuilder
+FROM node:alpine3.11 AS frontendbuilder
 
 # set working directory
 WORKDIR /app
