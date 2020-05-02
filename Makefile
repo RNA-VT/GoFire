@@ -43,5 +43,5 @@ build-js:
 	cd frontend && yarn install && yarn run build
 
 build-all-images:
-	docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t dtp263/gofire:v1.2 --push .
+	docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t dtp263/gofire:latest --push .
   
