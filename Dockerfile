@@ -18,7 +18,7 @@ COPY ./src .
 RUN go build -o ./gofire .
 
 # ------- frontend build ------- #
-FROM node:13.12.0-alpine AS frontendbuilder
+FROM node:alpine3.10 AS frontendbuilder
 
 # set working directory
 WORKDIR /app
@@ -27,10 +27,18 @@ WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 
 # install app dependencies
+COPY frontend/.yarnrc ./
 COPY frontend/package.json ./
-COPY frontend/package-lock.json ./
-RUN npm install --silent
-RUN npm install react-scripts@3.4.1 -g --silent
+COPY frontend/yarn.lock ./
+
+# COPY frontend/package.json ./
+# COPY frontend/package-lock.json ./
+
+RUN yarn install --silent
+RUN yarn global add react-scripts@3.4.1
+
+# RUN npm install --silent
+# RUN npm install react-scripts@3.4.1 -g
 
 # add app
 COPY ./frontend .
