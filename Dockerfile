@@ -18,7 +18,7 @@ COPY ./src .
 RUN go build -o ./gofire .
 
 # ------- frontend build ------- #
-FROM node:alpine3.11 AS frontendbuilder
+FROM node:current-alpine3.11 AS frontendbuilder
 
 # set working directory
 WORKDIR /app
