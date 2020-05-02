@@ -28,19 +28,19 @@ run-local-docker:
 	
 
 run-master:
-	cd src && GOFIRE_MASTER=true go run main.go
+	make build-js && cd src && GOFIRE_MASTER=true go run main.go
 
 run-slave:
-	cd src && go run main.go
+	make-build-js && cd src && go run main.go
 
 run-slave2:
-	cd src && GOFIRE_PORT=8002 GO111MODULE=on go run main.go
+	make-build-js && cd src && GOFIRE_PORT=8002 GO111MODULE=on go run main.go
 
 run-js:
-	cd frontend && npm run start
+	cd frontend && yarn install && yarn run start
 
 build-js:
-	cd frontend && npm run build
+	cd frontend && yarn install && yarn run build
 
 build-all-images:
 	docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t dtp263/gofire:v1.2 --push .
