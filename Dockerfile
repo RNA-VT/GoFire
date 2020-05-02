@@ -43,16 +43,10 @@ RUN yarn global add react-scripts@3.4.1
 # add app
 COPY ./frontend .
 
-RUN ls -al
-
-RUN npm run build
-
-RUN ls -al
-
-RUN ls -al build
+RUN yarn run build
 
 # ------- executable build ------- #
-FROM alpine:3.9
+FROM alpine:3.11
 RUN apk add ca-certificates
 
 RUN export GOFIRE_MASTER_HOST=`/sbin/ip route|awk '/default/ { print $3 }'` && export GOFIRE_MASTER=true
@@ -64,8 +58,6 @@ COPY --from=frontendbuilder /app/build /frontend/build/
 COPY --from=gofirebuilder /app/GoFire/gofire /app/
 COPY --from=gofirebuilder /app/GoFire/config.yaml /
 COPY --from=gofirebuilder /app/GoFire/app/config/ /app/config/
-
-RUN ls -al /frontend/build
 
 RUN chmod +x /app/gofire
 
