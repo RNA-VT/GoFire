@@ -56,7 +56,7 @@ func configureEnvironment() {
 
 	viper.AutomaticEnv()
 
-	viper.SetDefault("ENV", "local")
+	viper.SetDefault("ENV", "local") // local or production only
 	viper.SetDefault("GOFIRE_MASTER", false)
 	viper.SetDefault("GOFIRE_HOST", "")
 	viper.SetDefault("GOFIRE_PORT", 8001)
