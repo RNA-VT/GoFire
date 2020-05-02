@@ -35,11 +35,11 @@ service:
   port: 8000
 
 gofire: 
-  isMaster: "true"
+  isMaster: true
   masterHost: ""
   host: ""
   port: 8000
-  mockGpio: "true"
+  mockGpio: true
 
 port:
   gofireService: 8000

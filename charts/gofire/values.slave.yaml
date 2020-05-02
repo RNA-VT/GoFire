@@ -1,10 +1,10 @@
 service:
-  type: NodePort
   port: 8001
+  type: NodePort
 
 gofire:
-  isMaster: "true"
+  isMaster: false
   masterHost: "192.168.1.100"
-  host:
+  host: ""
   port: 8001
-  mockGpio: "true"
+  mockGpio: true

@@ -31,12 +31,12 @@ spec:
             - name: GOFIRE_MASTER
               value: {{ .Values.gofire.isMaster | quote }}
             {{- if .Values.gofire.masterHost }}
-              - name: GOFIRE_MASTER_HOST
-                value: {{ .Values.gofire.masterHost | quote }}
-            {{- end }}
+            - name: GOFIRE_MASTER_HOST
+              value: {{ .Values.gofire.masterHost | quote }}
+            {{ end }}
             {{- if .Values.gofire.host }}
-              - name: GOFIRE_HOST
-                value: {{ .Values.gofire.host | quote }}
+            - name: GOFIRE_HOST
+              value: {{ .Values.gofire.host | quote }}
             {{- end }}
             - name: GOFIRE_PORT
               value: {{ .Values.gofire.port | quote }}
