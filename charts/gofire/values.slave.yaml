@@ -3,8 +3,8 @@ service:
   port: 8001
 
 gofire:
-  isMaster: false
-  masterHost: 192.168.1.100
+  isMaster: "true"
+  masterHost: "192.168.1.100"
   host:
   port: 8001
-  mockGpio: true
+  mockGpio: "true"

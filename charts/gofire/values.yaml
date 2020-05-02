@@ -36,8 +36,8 @@ service:
 
 gofire: 
   isMaster: "true"
-  masterHost:
-  host:
+  masterHost: ""
+  host: ""
   port: 8000
   mockGpio: "true"
 
