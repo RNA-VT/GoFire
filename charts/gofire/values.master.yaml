@@ -1,0 +1,10 @@
+service:
+  type: NodePort
+  port: 8000
+
+gofire:
+  isMaster: "true"
+  masterHost:
+  host:
+  port: 8000
+  mockGpio: "true"
