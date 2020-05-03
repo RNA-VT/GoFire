@@ -1,10 +1,16 @@
 service:
   type: NodePort
-  port: 8000
+  port: 30000
 
 gofire:
   isMaster: "true"
-  masterHost:
-  host:
-  port: 8000
-  mockGpio: "true"
+  masterHost: ""
+  masterPort: 30000 
+  host: ""
+  port: 30000 
+  mockGpio: "false"
+  env: production
+
+
+nodeSelector: 
+  "gofire.node": master

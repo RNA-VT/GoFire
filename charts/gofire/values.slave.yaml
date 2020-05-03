@@ -5,6 +5,11 @@ service:
 gofire:
   isMaster: false
   masterHost: "192.168.1.100"
+  masterPort: 30000
   host: ""
-  port: 8001
-  mockGpio: true
+  port: 30001
+  mockGpio: true  
+  env: production
+
+nodeSelector: 
+  "gofire.node": slave

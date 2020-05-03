@@ -19,30 +19,26 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name:
 
-podSecurityContext: {}
-  # fsGroup: 2000
+podSecurityContext: 
+  runAsUser: 1000
+  runAsGroup: 997
+  fsGroup: 15
 
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
+securityContext: 
+  privileged: true
+  allowPrivilegeEscalation: true
+  capabilities:
+        add: ["SYS_RAWIO", "SYS_ADMIN"]
 service:
   type: NodePort
-  port: 8000
 
 gofire: 
   isMaster: true
   masterHost: ""
   host: ""
-  port: 8000
+  port: 30000
   mockGpio: true
 
-port:
-  gofireService: 8000
 
 ingress:
   enabled: false
