@@ -9,6 +9,7 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/spf13/viper"
+	"github.com/stianeikeland/go-rpio/v4"
 )
 
 /* The entry point for our System */
