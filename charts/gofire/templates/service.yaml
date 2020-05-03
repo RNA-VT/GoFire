@@ -7,9 +7,12 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.port.gofireService }}
+    - port: {{ .Values.gofire.port }}
       targetPort: http
       protocol: TCP
       name: http
+      {{ if eq .Values.service.type "NodePort" }}
+      nodePort: {{ .Values.gofire.port }}
+      {{ end }}
   selector:
     {{- include "gofire.selectorLabels" . | nindent 4 }}
