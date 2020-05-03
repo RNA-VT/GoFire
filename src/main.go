@@ -39,7 +39,8 @@ func main() {
 	var API routes.APIService
 
 	API.Cluster = &app.Cluster
-
+	rpio.Open()
+	defer rpio.Close()
 	app.Cluster.Start()
 	routes.ConfigureRoutes(fullHostname, app.Echo, API)
 }
