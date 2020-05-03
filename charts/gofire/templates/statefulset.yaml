@@ -1,10 +1,11 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "gofire.fullname" . }}
   labels:
     {{- include "gofire.labels" . | nindent 4 }}
 spec:
+  serviceName: {{ include "gofire.fullname" . }}
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
@@ -30,10 +31,10 @@ spec:
           env:
             - name: GOFIRE_MASTER
               value: {{ .Values.gofire.isMaster | quote }}
-            {{- if .Values.gofire.masterHost }}
             - name: GOFIRE_MASTER_HOST
               value: {{ .Values.gofire.masterHost | quote }}
-            {{ end }}
+            - name: GOFIRE_MASTER_PORT
+              value: {{ .Values.gofire.masterPort | quote }}
             {{- if .Values.gofire.host }}
             - name: GOFIRE_HOST
               value: {{ .Values.gofire.host | quote }}
@@ -42,20 +43,26 @@ spec:
               value: {{ .Values.gofire.port | quote }}
             - name: GOFIRE_MOCK_GPIO
               value: {{ .Values.gofire.mockGpio | quote }}
+            - name: ENV
+              value: {{ .Values.gofire.env }}
           ports:
             - name: http
-              containerPort: {{ .Values.port.gofireService }}
+              containerPort: {{ .Values.gofire.port }}
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: /dev/mem
+              name: devmem
+            - mountPath: /dev/gpiomem
+              name: devgpio
+      volumes:
+        - name: devmem
+          hostPath:
+            path: /dev/mem
+        - name: devgpio
+          hostPath:
+            path: /dev/gpiomem
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
