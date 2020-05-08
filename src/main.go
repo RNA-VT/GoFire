@@ -6,6 +6,7 @@ import (
 	"firecontroller/cluster"
 	"firecontroller/routes"
 	"fmt"
+	"os"
 
 	"github.com/labstack/echo"
 	"github.com/spf13/viper"
@@ -40,7 +41,10 @@ func main() {
 	var API routes.APIService
 
 	API.Cluster = &app.Cluster
-	rpio.Open()
+	if err := rpio.Open(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 	defer rpio.Close()
 	app.Cluster.Start()
 	routes.ConfigureRoutes(fullHostname, app.Echo, API)
