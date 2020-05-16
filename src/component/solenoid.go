@@ -3,9 +3,13 @@ package component
 import (
 	"firecontroller/io"
 	"firecontroller/utilities"
+	"fmt"
 	"log"
+	"os"
 	"strconv"
 	"time"
+
+	"github.com/stianeikeland/go-rpio"
 )
 
 // Solenoid - SolenoidConfig + GPIO
@@ -151,6 +155,11 @@ func (s *Solenoid) Command(cmd string) {
 
 //Open - Open the solenoid
 func (s *Solenoid) Open() {
+	if err := rpio.Open(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	defer rpio.Close()
 	if s.Healthy() {
 		s.GPIO.Pin.High()
 	} else {
@@ -162,6 +171,11 @@ func (s *Solenoid) Open() {
 
 //OpenFor - Open the solenoid for a set duration
 func (s *Solenoid) OpenFor(duration int) {
+	if err := rpio.Open(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	defer rpio.Close()
 	if s.Healthy() {
 		s.GPIO.Pin.High()
 		if duration > 0 {
@@ -174,6 +188,11 @@ func (s *Solenoid) OpenFor(duration int) {
 
 //Close - Close the solenoid, optionally after a delay
 func (s *Solenoid) Close(delay int) {
+	if err := rpio.Open(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	defer rpio.Close()
 	//TODO: Failing to Close a Solenoid is a pretty bad situation
 	if s.Healthy() {
 		if duration, err := time.ParseDuration(strconv.Itoa(delay) + "ms"); err == nil {

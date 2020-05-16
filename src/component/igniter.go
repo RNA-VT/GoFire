@@ -3,9 +3,13 @@ package component
 import (
 	"firecontroller/io"
 	"firecontroller/utilities"
+	"fmt"
 	"log"
+	"os"
 	"strconv"
 	"time"
+
+	"github.com/stianeikeland/go-rpio"
 )
 
 //Igniter - Thesr are hot... when we want them to be
@@ -129,6 +133,11 @@ func (i *Igniter) Command(cmd string) {
 
 //On - hawt
 func (i *Igniter) On() {
+	if err := rpio.Open(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	defer rpio.Close()
 	if i.Healthy() {
 		i.GPIO.Pin.High()
 	}
@@ -136,6 +145,11 @@ func (i *Igniter) On() {
 
 //Off - not hawt
 func (i *Igniter) Off() {
+	if err := rpio.Open(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	defer rpio.Close()
 	if i.Healthy() {
 		i.GPIO.Pin.Low()
 	}
@@ -143,6 +157,11 @@ func (i *Igniter) Off() {
 
 //OnForDuration - light this igniter for a set period of time
 func (i *Igniter) OnForDuration(duration int) {
+	if err := rpio.Open(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	defer rpio.Close()
 	if i.Healthy() {
 		switch i.Type {
 		case Induction:
@@ -157,6 +176,11 @@ func (i *Igniter) OnForDuration(duration int) {
 	}
 }
 func (i *Igniter) offAfter(duration int) {
+	if err := rpio.Open(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	defer rpio.Close()
 	if length, err := time.ParseDuration(strconv.Itoa(duration) + "ms"); err == nil {
 		time.AfterFunc(length, i.Off)
 	} else {

@@ -42,6 +42,9 @@ type RpiPinMap struct {
 	HeaderPin int
 }
 
+//NoPin is a placeholder value for a pin that should not be assigned to a component
+var NoPin uint8 = 255
+
 func (r RpiPinMap) String() string {
 	return "\t" + utilities.LabelString("Name", r.Name) + "\t" +
 		utilities.LabelString("Header Pin", strconv.Itoa(r.HeaderPin)) + "\t" +
@@ -50,11 +53,10 @@ func (r RpiPinMap) String() string {
 
 //GetPins - Returns Pins for Raspi 4
 func GetPins() []RpiPinMap {
-	var noPin uint8 = 255
 	return []RpiPinMap{
 		RpiPinMap{
 			HeaderPin: 1,
-			BcmPin:    noPin,
+			BcmPin:    NoPin,
 			Name:      "3.3v",
 		},
 		RpiPinMap{
@@ -74,7 +76,7 @@ func GetPins() []RpiPinMap {
 		},
 		RpiPinMap{
 			HeaderPin: 9,
-			BcmPin:    noPin,
+			BcmPin:    NoPin,
 			Name:      "0v",
 		},
 		RpiPinMap{
@@ -94,7 +96,7 @@ func GetPins() []RpiPinMap {
 		},
 		RpiPinMap{
 			HeaderPin: 17,
-			BcmPin:    noPin,
+			BcmPin:    NoPin,
 			Name:      "3.3v",
 		},
 		RpiPinMap{
@@ -114,7 +116,7 @@ func GetPins() []RpiPinMap {
 		},
 		RpiPinMap{
 			HeaderPin: 25,
-			BcmPin:    noPin,
+			BcmPin:    NoPin,
 			Name:      "0v",
 		},
 		RpiPinMap{
@@ -149,22 +151,22 @@ func GetPins() []RpiPinMap {
 		},
 		RpiPinMap{
 			HeaderPin: 39,
-			BcmPin:    noPin,
+			BcmPin:    NoPin,
 			Name:      "0v",
 		},
 		RpiPinMap{
 			HeaderPin: 2,
-			BcmPin:    noPin,
+			BcmPin:    NoPin,
 			Name:      "5v",
 		},
 		RpiPinMap{
 			HeaderPin: 4,
-			BcmPin:    noPin,
+			BcmPin:    NoPin,
 			Name:      "5v",
 		},
 		RpiPinMap{
 			HeaderPin: 6,
-			BcmPin:    noPin,
+			BcmPin:    NoPin,
 			Name:      "0v",
 		},
 		RpiPinMap{
@@ -184,7 +186,7 @@ func GetPins() []RpiPinMap {
 		},
 		RpiPinMap{
 			HeaderPin: 14,
-			BcmPin:    noPin,
+			BcmPin:    NoPin,
 			Name:      "0v",
 		},
 		RpiPinMap{
@@ -199,7 +201,7 @@ func GetPins() []RpiPinMap {
 		},
 		RpiPinMap{
 			HeaderPin: 20,
-			BcmPin:    noPin,
+			BcmPin:    NoPin,
 			Name:      "0v",
 		},
 		RpiPinMap{
@@ -224,7 +226,7 @@ func GetPins() []RpiPinMap {
 		},
 		RpiPinMap{
 			HeaderPin: 30,
-			BcmPin:    noPin,
+			BcmPin:    NoPin,
 			Name:      "0v",
 		},
 		RpiPinMap{
@@ -234,7 +236,7 @@ func GetPins() []RpiPinMap {
 		},
 		RpiPinMap{
 			HeaderPin: 34,
-			BcmPin:    noPin,
+			BcmPin:    NoPin,
 			Name:      "0v",
 		},
 		RpiPinMap{

@@ -8,7 +8,6 @@ import (
 	"log"
 	"os"
 	"strconv"
-	"strings"
 
 	"github.com/spf13/viper"
 	"github.com/stianeikeland/go-rpio/v4"
@@ -107,7 +106,7 @@ func (g *Gpio) loadPinInfoByHeader(headerPin int) error {
 	pins := GetPins()
 	for i := 0; i < len(pins); i++ {
 		if pins[i].HeaderPin == headerPin {
-			if strings.Contains(pins[i].Name, "GPIO") {
+			if pins[i].BcmPin != NoPin {
 				g.Failed = false
 				g.PinInfo = pins[i]
 				return nil
