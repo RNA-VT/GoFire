@@ -6,11 +6,9 @@ import (
 	"firecontroller/cluster"
 	"firecontroller/routes"
 	"fmt"
-	"os"
 
 	"github.com/labstack/echo"
 	"github.com/spf13/viper"
-	"github.com/stianeikeland/go-rpio/v4"
 )
 
 /* The entry point for our System */
@@ -41,11 +39,6 @@ func main() {
 	var API routes.APIService
 
 	API.Cluster = &app.Cluster
-	if err := rpio.Open(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	defer rpio.Close()
 	app.Cluster.Start()
 	routes.ConfigureRoutes(fullHostname, app.Echo, API)
 }
@@ -71,4 +64,5 @@ func configureEnvironment() {
 	viper.SetDefault("GOFIRE_MOCK_GPIO", true)
 	viper.SetDefault("CLUSTER_NAME", "MasterOfHot")
 	viper.SetDefault("MICROCONTORLLER_LIMIT", 255)
+	viper.SetDefault("GOFIRE_CONFIG_FILE", "./app/config/microcontroller.yaml")
 }

@@ -152,7 +152,8 @@ func (m Microcontroller) ToFullAddress() string {
 
 //LoadConfigFromFile - Load Solenoid Array from config
 func (m *Microcontroller) LoadConfigFromFile() error {
-	yamlFile, err := ioutil.ReadFile("./app/config/microcontroller.yaml")
+
+	yamlFile, err := ioutil.ReadFile(viper.GetString("GOFIRE_CONFIG_FILE"))
 	if err != nil {
 		log.Printf("yamlFile.Get err   #%v ", err)
 		return err
