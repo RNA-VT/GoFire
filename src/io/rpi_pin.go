@@ -60,17 +60,17 @@ func GetPins() []RpiPinMap {
 		RpiPinMap{
 			HeaderPin: 3,
 			BcmPin:    2,
-			Name:      "SDA 1",
+			Name:      "BCM 2/SDA 1",
 		},
 		RpiPinMap{
 			HeaderPin: 5,
 			BcmPin:    3,
-			Name:      "SCL 1",
+			Name:      "BCM 3/SCL 1",
 		},
 		RpiPinMap{
 			HeaderPin: 7,
 			BcmPin:    4,
-			Name:      "GPIO 7",
+			Name:      "BCM 4/GPIOCLK0",
 		},
 		RpiPinMap{
 			HeaderPin: 9,
@@ -80,17 +80,17 @@ func GetPins() []RpiPinMap {
 		RpiPinMap{
 			HeaderPin: 11,
 			BcmPin:    17,
-			Name:      "GPIO 0",
+			Name:      "BCM 17",
 		},
 		RpiPinMap{
 			HeaderPin: 13,
 			BcmPin:    27,
-			Name:      "GPIO 2",
+			Name:      "BCM 27",
 		},
 		RpiPinMap{
 			HeaderPin: 15,
 			BcmPin:    22,
-			Name:      "GPIO 3",
+			Name:      "BCM 22",
 		},
 		RpiPinMap{
 			HeaderPin: 17,
@@ -100,17 +100,17 @@ func GetPins() []RpiPinMap {
 		RpiPinMap{
 			HeaderPin: 19,
 			BcmPin:    10,
-			Name:      "MOSI",
+			Name:      "BCM 10/MOSI",
 		},
 		RpiPinMap{
 			HeaderPin: 21,
 			BcmPin:    9,
-			Name:      "MISO",
+			Name:      "BCM 9/MISO",
 		},
 		RpiPinMap{
 			HeaderPin: 23,
 			BcmPin:    11,
-			Name:      "SCLK",
+			Name:      "BCM 11/SCLK",
 		},
 		RpiPinMap{
 			HeaderPin: 25,
@@ -120,32 +120,32 @@ func GetPins() []RpiPinMap {
 		RpiPinMap{
 			HeaderPin: 27,
 			BcmPin:    0,
-			Name:      "SDA 0",
+			Name:      "BCM 0/SDA 0",
 		},
 		RpiPinMap{
 			HeaderPin: 29,
 			BcmPin:    5,
-			Name:      "GPIO 21",
+			Name:      "BCM 5",
 		},
 		RpiPinMap{
 			HeaderPin: 31,
 			BcmPin:    6,
-			Name:      "GPIO 22",
+			Name:      "BCM 6",
 		},
 		RpiPinMap{
 			HeaderPin: 33,
 			BcmPin:    13,
-			Name:      "GPIO 23",
+			Name:      "BCM 13/PWM1",
 		},
 		RpiPinMap{
 			HeaderPin: 35,
 			BcmPin:    19,
-			Name:      "GPIO 24",
+			Name:      "BCM 19/MISO",
 		},
 		RpiPinMap{
 			HeaderPin: 37,
 			BcmPin:    26,
-			Name:      "GPIO 25",
+			Name:      "BCM 26",
 		},
 		RpiPinMap{
 			HeaderPin: 39,
@@ -170,17 +170,17 @@ func GetPins() []RpiPinMap {
 		RpiPinMap{
 			HeaderPin: 8,
 			BcmPin:    14,
-			Name:      "TxD",
+			Name:      "BCM 14/TxD",
 		},
 		RpiPinMap{
 			HeaderPin: 10,
 			BcmPin:    15,
-			Name:      "RxD",
+			Name:      "BCM 15/RxD",
 		},
 		RpiPinMap{
 			HeaderPin: 12,
 			BcmPin:    18,
-			Name:      "GPIO 1",
+			Name:      "BCM 18/PWM0",
 		},
 		RpiPinMap{
 			HeaderPin: 14,
@@ -190,12 +190,12 @@ func GetPins() []RpiPinMap {
 		RpiPinMap{
 			HeaderPin: 16,
 			BcmPin:    23,
-			Name:      "GPIO 4",
+			Name:      "BCM 23",
 		},
 		RpiPinMap{
 			HeaderPin: 18,
 			BcmPin:    24,
-			Name:      "GPIO 5",
+			Name:      "BCM 24",
 		},
 		RpiPinMap{
 			HeaderPin: 20,
@@ -205,22 +205,22 @@ func GetPins() []RpiPinMap {
 		RpiPinMap{
 			HeaderPin: 22,
 			BcmPin:    25,
-			Name:      "GPIO 6",
+			Name:      "BCM 25",
 		},
 		RpiPinMap{
 			HeaderPin: 24,
 			BcmPin:    8,
-			Name:      "CE0",
+			Name:      "BCM 8/CE0",
 		},
 		RpiPinMap{
 			HeaderPin: 26,
 			BcmPin:    7,
-			Name:      "CE1",
+			Name:      "BCM 7/CE1",
 		},
 		RpiPinMap{
 			HeaderPin: 28,
 			BcmPin:    1,
-			Name:      "SCL 0",
+			Name:      "BCM 1/ID_SC",
 		},
 		RpiPinMap{
 			HeaderPin: 30,
@@ -230,7 +230,7 @@ func GetPins() []RpiPinMap {
 		RpiPinMap{
 			HeaderPin: 32,
 			BcmPin:    12,
-			Name:      "GPIO 26",
+			Name:      "BCM 12/PWM0",
 		},
 		RpiPinMap{
 			HeaderPin: 34,
@@ -240,17 +240,17 @@ func GetPins() []RpiPinMap {
 		RpiPinMap{
 			HeaderPin: 36,
 			BcmPin:    16,
-			Name:      "GPIO 27",
+			Name:      "BCM 16",
 		},
 		RpiPinMap{
 			HeaderPin: 38,
 			BcmPin:    20,
-			Name:      "GPIO 28",
+			Name:      "BCM 20/MOSI",
 		},
 		RpiPinMap{
 			HeaderPin: 40,
 			BcmPin:    21,
-			Name:      "GPIO 29",
+			Name:      "BCM 21/SCLK",
 		},
 	}
 }
