@@ -4,7 +4,9 @@ import (
 	"errors"
 	"firecontroller/io/mock"
 	"firecontroller/utilities"
+	"fmt"
 	"log"
+	"os"
 	"strconv"
 	"strings"
 
@@ -53,7 +55,13 @@ func (g *Gpio) Init(headerPin int, initHigh bool) error {
 		g.Pin = mock.Pin(g.PinInfo.BcmPin)
 	} else {
 		g.Pin = rpio.Pin(g.PinInfo.BcmPin)
+		if err := rpio.Open(); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		defer rpio.Close()
 	}
+
 	g.Pin.Output()
 	if initHigh {
 		g.Pin.High()
@@ -65,12 +73,22 @@ func (g *Gpio) Init(headerPin int, initHigh bool) error {
 
 //HandleEnable -
 func (g *Gpio) HandleEnable() bool {
+	if err := rpio.Open(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	defer rpio.Close()
 	g.Pin.Low()
 	return true
 }
 
 //HandleDisable -
 func (g *Gpio) HandleDisable() bool {
+	if err := rpio.Open(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	defer rpio.Close()
 	g.Pin.Low()
 	return true
 }
