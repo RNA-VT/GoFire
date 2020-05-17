@@ -59,7 +59,7 @@ func GetPins() []RpiPinMap {
 			BcmPin:    NoPin,
 			Name:      "3.3v",
 		},
-		RpiPinMap{
+		{
 			HeaderPin: 3,
 			BcmPin:    2,
 			Name:      "BCM 2/SDA 1",

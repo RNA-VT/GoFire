@@ -43,13 +43,13 @@ func (g Gpio) String() string {
 
 //Init - create gpio pin object and set modes
 func (g *Gpio) Init(headerPin int, initHigh bool) error {
-
 	if err := g.loadPinInfoByHeader(headerPin); err != nil {
 		return err
 	}
 	log.Println("BCM Pin:", g.PinInfo.BcmPin)
 	//This pin theoretically checks out, but is it real?
-	if viper.GetBool("GOFIRE_MOCK_GPIO") || viper.GetString("ENV") == "local" {
+	thisIsNotReal := viper.GetBool("GOFIRE_MOCK_GPIO") || viper.GetString("ENV") == "local"
+	if thisIsNotReal {
 		//Nothing is real and this pin, especially, is laughable. Mock it.
 		g.Pin = mock.Pin(g.PinInfo.BcmPin)
 	} else {
@@ -58,15 +58,17 @@ func (g *Gpio) Init(headerPin int, initHigh bool) error {
 			fmt.Println(err)
 			os.Exit(1)
 		}
-		defer rpio.Close()
 	}
-
 	g.Pin.Output()
 	if initHigh {
 		g.Pin.High()
 	} else {
 		g.Pin.Low()
 	}
+	if !thisIsNotReal {
+		rpio.Close()
+	}
+
 	return nil
 }
 
