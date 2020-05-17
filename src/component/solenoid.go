@@ -145,7 +145,7 @@ func (s *Solenoid) Command(cmd string) {
 	case "open":
 		s.Open()
 	case "close":
-		s.Close(0)
+		s.Close()
 	case "enable":
 		s.Enable(false)
 	case "disable":
@@ -169,42 +169,43 @@ func (s *Solenoid) Open() {
 	}
 }
 
-//OpenFor - Open the solenoid for a set duration
-func (s *Solenoid) OpenFor(duration int) {
+//Close - close the solenoid now.
+func (s *Solenoid) Close() {
 	if err := rpio.Open(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 	defer rpio.Close()
 	if s.Healthy() {
-		s.GPIO.Pin.High()
-		if duration > 0 {
-			s.Close(duration)
-		}
-	} else {
-		//Log attempt to open unhealthy solenoid
+		s.GPIO.Pin.Low()
 	}
 }
 
-//Close - Close the solenoid, optionally after a delay
-func (s *Solenoid) Close(delay int) {
-	if err := rpio.Open(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+//OpenFor - Open the solenoid for a set duration
+func (s *Solenoid) OpenFor(duration int) {
+	if s.Healthy() {
+		s.Open()
+		if duration > 0 {
+			s.CloseAfter(duration)
+		}
+	} else {
+		//Log attempt to open unhealthy solenoid
+		log.Println("Cannot open an unhealthy Solenoid")
 	}
-	defer rpio.Close()
-	//TODO: Failing to Close a Solenoid is a pretty bad situation
+}
+
+//CloseAfter - Close the solenoid, optionally after a delay
+func (s *Solenoid) CloseAfter(delay int) {
 	if s.Healthy() {
 		if duration, err := time.ParseDuration(strconv.Itoa(delay) + "ms"); err == nil {
-			time.AfterFunc(duration, s.GPIO.Pin.Low)
+			time.AfterFunc(duration, s.Close)
 		} else {
 			//Log Failure to Close
 			log.Println("Failed to Close a Solenoid due to an invalid or malformed delay time. \n~~~~Closing now~~~~")
-			s.GPIO.Pin.Low()
+			s.Close()
 		}
 	} else {
-		//Log attempt to close unhealthy
-		log.Println("Failed to Close a Solenoid! It's unhealthy and cannot be commanded.")
+		log.Println("Cannot command unhealthy solenoid")
 	}
 }
 

@@ -140,6 +140,10 @@ func (i *Igniter) On() {
 	defer rpio.Close()
 	if i.Healthy() {
 		i.GPIO.Pin.High()
+	} else {
+		//TODO: should we fail the pin/component here?
+		//Log attempt to open unhealthy igniter
+		log.Println("*Cough* *Cough*, I don't think I'm going to make it in today...")
 	}
 }
 
@@ -155,42 +159,34 @@ func (i *Igniter) Off() {
 	}
 }
 
-//OnForDuration - light this igniter for a set period of time
+//OnForDuration - light this igniter for a set period of ms
 func (i *Igniter) OnForDuration(duration int) {
-	if err := rpio.Open(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	defer rpio.Close()
 	if i.Healthy() {
 		switch i.Type {
 		case Induction:
 			fallthrough
 		case GlowFly:
 			i.On()
-			i.offAfter(duration)
+			i.OffAfter(duration)
 			break
 		}
 	} else {
 		log.Println("Cannot light unhealthy Igniter")
 	}
 }
-func (i *Igniter) offAfter(duration int) {
-	if err := rpio.Open(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	defer rpio.Close()
-	if length, err := time.ParseDuration(strconv.Itoa(duration) + "ms"); err == nil {
-		time.AfterFunc(length, i.Off)
+
+//OffAfter - turn off this igniter after duration (ms)
+func (i *Igniter) OffAfter(duration int) {
+	if i.Healthy() {
+		if length, err := time.ParseDuration(strconv.Itoa(duration) + "ms"); err == nil {
+			time.AfterFunc(length, i.Off)
+		} else {
+			//Log Failure to Close
+			log.Println("Failed to arrest an igniter:", "Invalid or malformed delay time.", " Closing Now.")
+			i.Off()
+		}
 	} else {
-		//Log Failure to Close
-		log.Println(
-			"Failed to arrest an igniter:",
-			"Invalid or malformed delay time.",
-			" ~~~~Arresting now~~~~",
-		)
-		i.Off()
+		log.Println("Cannot command unhealthy igniter")
 	}
 }
 
