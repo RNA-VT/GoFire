@@ -28,13 +28,13 @@ run-local-docker:
 	
 
 run-master:
-	make build-js && cd src && GOFIRE_MASTER=true go run main.go
+	cd src && GOFIRE_MOCK_GPIO=false ENV=production GOFIRE_MASTER=true go run main.go
 
 run-slave:
-	make-build-js && cd src && go run main.go
+	cd src && go run main.go
 
 run-slave2:
-	make-build-js && cd src && GOFIRE_PORT=8002 GO111MODULE=on go run main.go
+	cd src && GOFIRE_PORT=8002 go run main.go
 
 run-js:
 	cd frontend && yarn install && yarn run start
