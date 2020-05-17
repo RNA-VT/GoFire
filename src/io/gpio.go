@@ -50,9 +50,11 @@ func (g *Gpio) Init(headerPin int, initHigh bool) error {
 	//This pin theoretically checks out, but is it real?
 	thisIsNotReal := viper.GetBool("GOFIRE_MOCK_GPIO") || viper.GetString("ENV") == "local"
 	if thisIsNotReal {
+		log.Println("Mocking...")
 		//Nothing is real and this pin, especially, is laughable. Mock it.
 		g.Pin = mock.Pin(g.PinInfo.BcmPin)
 	} else {
+		log.Println("This Pin is Real...")
 		g.Pin = rpio.Pin(g.PinInfo.BcmPin)
 		if err := rpio.Open(); err != nil {
 			fmt.Println(err)
