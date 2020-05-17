@@ -96,7 +96,7 @@ func (s *Solenoid) Disable() {
 //Enable and optionally initializes the gpio pin
 func (s *Solenoid) Enable(init bool) (err error) {
 	if init {
-		err = s.GPIO.Init(s.HeaderPin, false)
+		err = s.GPIO.Init(s.HeaderPin, true)
 		if err != nil {
 			return
 		}

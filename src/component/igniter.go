@@ -75,7 +75,7 @@ func (i *Igniter) Init() error {
 func (i *Igniter) Enable(init bool) (err error) {
 	i.Enabled = true
 	if init {
-		err := i.GPIO.Init(i.HeaderPin, false)
+		err := i.GPIO.Init(i.HeaderPin, true)
 		if err != nil {
 			return err
 		}
