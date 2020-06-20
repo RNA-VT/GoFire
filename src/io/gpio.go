@@ -4,9 +4,10 @@ import (
 	"errors"
 	"firecontroller/io/mock"
 	"firecontroller/utilities"
+	"fmt"
 	"log"
+	"os"
 	"strconv"
-	"strings"
 
 	"github.com/spf13/viper"
 	"github.com/stianeikeland/go-rpio/v4"
@@ -42,17 +43,23 @@ func (g Gpio) String() string {
 
 //Init - create gpio pin object and set modes
 func (g *Gpio) Init(headerPin int, initHigh bool) error {
-
 	if err := g.loadPinInfoByHeader(headerPin); err != nil {
 		return err
 	}
 	log.Println("BCM Pin:", g.PinInfo.BcmPin)
 	//This pin theoretically checks out, but is it real?
-	if viper.GetBool("GOFIRE_MOCK_GPIO") || viper.GetString("ENV") == "local" {
+	thisIsNotReal := viper.GetBool("GOFIRE_MOCK_GPIO") || viper.GetString("ENV") == "local"
+	if thisIsNotReal {
+		log.Println("Mocking...")
 		//Nothing is real and this pin, especially, is laughable. Mock it.
 		g.Pin = mock.Pin(g.PinInfo.BcmPin)
 	} else {
+		log.Println("This Pin is Real...")
 		g.Pin = rpio.Pin(g.PinInfo.BcmPin)
+		if err := rpio.Open(); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 	}
 	g.Pin.Output()
 	if initHigh {
@@ -60,17 +67,31 @@ func (g *Gpio) Init(headerPin int, initHigh bool) error {
 	} else {
 		g.Pin.Low()
 	}
+	if !thisIsNotReal {
+		rpio.Close()
+	}
+
 	return nil
 }
 
 //HandleEnable -
 func (g *Gpio) HandleEnable() bool {
+	if err := rpio.Open(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	defer rpio.Close()
 	g.Pin.Low()
 	return true
 }
 
 //HandleDisable -
 func (g *Gpio) HandleDisable() bool {
+	if err := rpio.Open(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	defer rpio.Close()
 	g.Pin.Low()
 	return true
 }
@@ -89,7 +110,7 @@ func (g *Gpio) loadPinInfoByHeader(headerPin int) error {
 	pins := GetPins()
 	for i := 0; i < len(pins); i++ {
 		if pins[i].HeaderPin == headerPin {
-			if strings.Contains(pins[i].Name, "GPIO") {
+			if pins[i].BcmPin != NoPin {
 				g.Failed = false
 				g.PinInfo = pins[i]
 				return nil

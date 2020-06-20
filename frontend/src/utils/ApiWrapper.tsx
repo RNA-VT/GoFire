@@ -16,7 +16,7 @@ class API {
   }
 
   async editComponent(uid: string, newData: object) {
-    const queryUrl = 'http://' + this.masterUrl + '/component/' + uid
+    const queryUrl = this.masterUrl + '/component/' + uid
 
     return fetch(queryUrl, {
       method: 'POST',
@@ -28,7 +28,7 @@ class API {
   }
 
   async editMicrocontroller(uid: string, newData: object) {
-    const queryUrl = 'http://' + this.masterUrl + '/' + uid
+    const queryUrl = this.masterUrl + '/' + uid
 
     return fetch(queryUrl, {
       method: 'POST',
@@ -40,7 +40,7 @@ class API {
   }
 
   openSolenoid(uid: string) {
-    const queryUrl = 'http://' + this.masterUrl + '/component/' + uid + '/cmd'
+    const queryUrl = this.masterUrl + '/component/' + uid + '/cmd'
     fetch(queryUrl, {
       method: 'POST',
       headers: {
@@ -56,7 +56,7 @@ class API {
   }
 
   closeSolenoid(uid: string) {
-    const queryUrl = 'http://' + this.masterUrl + '/component/' + uid + '/cmd'
+    const queryUrl = this.masterUrl + '/component/' + uid + '/cmd'
     fetch(queryUrl, {
       method: 'POST',
       headers: {
