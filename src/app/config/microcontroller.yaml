@@ -4,48 +4,48 @@ solenoids:
   - name: main_supply
     type: supply
     mode: NC
-    header_pin: 3
+    header_pin: 7
     metadata:
       voltage: 120
   - name: sign_trench_inlet
     type: supply
-    header_pin: 5
+    header_pin: 11
     mode: NC
     metadata:
       voltage: 120
   - name: sign_trench_outlet
     type: supply
-    header_pin: 7
+    header_pin: 13
     mode: NC
     metadata:
       voltage: 120
   - name: sign_0
     type: outlet
-    header_pin: 11
+    header_pin: 15
     mode: NC
     metadata:
       voltage: 120
   - name: sign_1
     type: outlet
-    header_pin: 13
+    header_pin: 16
     mode: NC
     metadata:
       voltage: 120
   - name: sign_2
     type: outlet
-    header_pin: 15
+    header_pin: 29
     mode: NC
     metadata:
       voltage: 120
   - name: sign_3
     type: outlet
-    header_pin: 19
+    header_pin: 31
     mode: NC
     metadata:
       voltage: 120
   - name: sign_4
     type: outlet
-    header_pin: 21
+    header_pin: 33
     mode: NC
     metadata:
       voltage: 120
